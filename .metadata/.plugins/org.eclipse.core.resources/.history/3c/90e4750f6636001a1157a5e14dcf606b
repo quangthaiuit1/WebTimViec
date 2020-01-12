@@ -1,0 +1,10 @@
+package lixco.com.beans;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ManagedBean(name = "quanLyDangTin")
+@ViewScoped
+public class UploadImage {
+
+}

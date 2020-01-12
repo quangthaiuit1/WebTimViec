@@ -1,0 +1,23 @@
+package lixco.com.beans;
+
+import java.io.Serializable;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+
+import lixco.com.services.CompanyService;
+
+@ManagedBean
+@ViewScoped
+public class CompanyMBean implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private CompanyService companyService;
+	
+	public void update() {
+		
+	}
+}

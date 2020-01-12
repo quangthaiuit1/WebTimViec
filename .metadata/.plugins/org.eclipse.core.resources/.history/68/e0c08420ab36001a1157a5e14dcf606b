@@ -1,0 +1,219 @@
+package lixco.com.beans;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+
+import org.primefaces.PrimeFaces;
+
+import lixco.com.entities.AllowAccess;
+import lixco.com.entities.Permission;
+import lixco.com.entities.Role;
+import lixco.com.entities.Role_Permission;
+import lixco.com.entities.User;
+import lixco.com.entities.User_Role;
+import lixco.com.services.PermissionService;
+import lixco.com.services.RoleService;
+import lixco.com.services.Role_PermissionService;
+import lixco.com.services.UserService;
+import lixco.com.services.User_RoleService;
+
+@ManagedBean
+@ViewScoped
+public class Capquyen implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+	
+	//Toan bo user
+	private List<User> allAccount;
+	private boolean roleValue = false;
+	//Toan bo role
+	private List<Role> roles;
+	//Bien de sua quyen truy cap tu danh sach role
+	private AllowAccess access = new AllowAccess();
+	
+	//Toan bo permission
+	private List<Permission> permissions;
+	private Role selectedRole;
+	//Danh sach role duoc chon
+	private List<Role> selectedRoles;
+	//Quyen them xoa sua
+	private boolean isCreate = false;
+	private boolean isRead = false;
+	private boolean isUpdate = false;
+	private boolean isDelete = false;
+	
+	//Variable Cap quyen va phan quyen
+	private List<User> selectedUsers;
+	private User selectedUser;
+	private List<User_Role> user_Roles;
+	
+	@Inject 
+	private UserService userService;
+	
+	@Inject 
+	private User_RoleService u_rService;
+	
+	@Inject 
+	private RoleService roleService;
+	
+	@Inject
+	private PermissionService permissionService;
+	
+	@Inject
+	private Role_PermissionService r_pService;
+
+	
+	@PostConstruct
+	public void init() {
+		//Toan bo role
+		roles = roleService.findAllByFilter();
+		//Toan bo user
+		allAccount = userService.findAllByFilter();
+		permissions = permissionService.findAllByFilter();
+		selectedRoles = new ArrayList<>();
+		selectedRole = new Role();
+		
+	}
+	public void xemQuyen() {
+		selectedRoles = new ArrayList<>();
+		user_Roles = u_rService.findByUserId(selectedUser.getId());
+		for (User_Role user : user_Roles) {
+			selectedRoles.add(user.getRole());
+		}
+	}
+	//Xem duoc truy cap form nao
+	public void xemQuyenTruyCapForm() {
+		List<Role_Permission> temp = new ArrayList<>();
+		access = new AllowAccess();
+		temp = r_pService.findByRoleId(selectedRole.getId());
+		for(int i = 0; i < permissions.size(); i++) {
+			for(int j = 0 ; j < temp.size(); j++) {
+				
+				if(temp.get(j).isCreate() == true && permissions.get(i).getId() == temp.get(i).getPermission().getId()) {
+					access.setCreate(true);
+				}
+				if(temp.get(j).isRead() == true && permissions.get(i).getId() == temp.get(i).getPermission().getId()) {
+					access.setRead(true);
+				}
+				if(temp.get(j).isUpdate() == true && permissions.get(i).getId() == temp.get(i).getPermission().getId()) {
+					access.setUpdate(true);
+				}
+				if(temp.get(j).isDelete() == true && permissions.get(i).getId() == temp.get(i).getPermission().getId()) {
+					access.setDelete(true);
+				}	
+			}
+		}
+	}
+	//Cap nhat quyen
+	public void updateQuyen() {
+		// selected User
+		//selected Role
+		List<User_Role> temp = u_rService.find(selectedUser.getId(), null);
+		for (User_Role user_Role : temp) {
+			u_rService.delete(user_Role);
+			System.out.println("a");
+		}
+		for (Role role : selectedRoles) {
+			u_rService.update(selectedUser, role);
+			System.out.println("b");
+		}
+		allAccount = userService.findAllByFilter();
+		PrimeFaces.current().executeScript("PF('dialogUpdateSuccess').show()");
+	}
+	//Cap quyen
+	public void capQuyenChoAccount() {
+			allAccount = new ArrayList<>();
+			allAccount = userService.findAllByFilter();
+	}
+	public List<User> getAllAccount() {
+		return allAccount;
+	}
+	public void setAllAccount(List<User> allAccount) {
+		this.allAccount = allAccount;
+	}
+	public List<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+	public List<Role> getSelectedRoles() {
+		return selectedRoles;
+	}
+	public void setSelectedRoles(List<Role> selectedRoles) {
+		this.selectedRoles = selectedRoles;
+	}
+	public List<User> getSelectedUsers() {
+		return selectedUsers;
+	}
+	public void setSelectedUsers(List<User> selectedUsers) {
+		this.selectedUsers = selectedUsers;
+	}
+	public User getSelectedUser() {
+		return selectedUser;
+	}
+	public void setSelectedUser(User selectedUser) {
+		this.selectedUser = selectedUser;
+	}
+	public List<User_Role> getUser_Roles() {
+		return user_Roles;
+	}
+	public void setUser_Roles(List<User_Role> user_Roles) {
+		this.user_Roles = user_Roles;
+	}
+	public boolean isRoleValue() {
+		return roleValue;
+	}
+	public void setRoleValue(boolean roleValue) {
+		this.roleValue = roleValue;
+	}
+	public Role getSelectedRole() {
+		return selectedRole;
+	}
+	public void setSelectedRole(Role selectedRole) {
+		this.selectedRole = selectedRole;
+	}
+
+	public boolean isCreate() {
+		return isCreate;
+	}
+	public void setCreate(boolean isCreate) {
+		this.isCreate = isCreate;
+	}
+	public boolean isRead() {
+		return isRead;
+	}
+	public void setRead(boolean isRead) {
+		this.isRead = isRead;
+	}
+	public boolean isUpdate() {
+		return isUpdate;
+	}
+	public void setUpdate(boolean isUpdate) {
+		this.isUpdate = isUpdate;
+	}
+	public boolean isDelete() {
+		return isDelete;
+	}
+	public void setDelete(boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+	public List<Permission> getPermissions() {
+		return permissions;
+	}
+	public void setPermissions(List<Permission> permissions) {
+		this.permissions = permissions;
+	}
+	public AllowAccess getAccess() {
+		return access;
+	}
+	public void setAccess(AllowAccess access) {
+		this.access = access;
+	}
+}

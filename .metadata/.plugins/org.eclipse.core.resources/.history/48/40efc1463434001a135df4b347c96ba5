@@ -1,0 +1,5 @@
+package lixco.com.entities;
+
+public class AllowAccess {
+
+}

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<title>LIXCO</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	Bootstrap core CSS
+	<h:outputStylesheet library="bootstrap"
+		name="web/css/bootstrap.min.css" />
+	<h:outputStylesheet library="bootstrap" name="web/css/style-css.css" />
+	<h:outputStylesheet library="bootstrap" name="web/css/css-search.css" />
+
+	Custom styles for this template
+	<h:outputStylesheet library="bootstrap"
+		name="web/css/modern-business.css" />
+
+
+</h:head>
+<h:body style="background-color: #eee">
+	<ui:composition template="common.xhtml">
+		<ui:define name="content">
+			<h:form id="formDSBaiDang" stickyHeader="true"
+				stickyTopAt=".layout-topbar">
+				<p:growl id="msgs" showDetail="true" />
+				<p:dataTable id="pDataTableDSBaiDang" var="item"
+					paginatorPosition="bottom" sortBy="#{item.createdDate}"
+					paginator="true" rows="20" stickyHeader="true"
+					stickyTopAt=".layout-topbar" value="#{quanLyDangTin.postsCustomer}"
+					style="width: 90%;margin: 0 auto; font-size: 12px;">
+					SummaryRow là sort toàn bộ bảng. nhưng set 1 trường sort mặc định trên datatable 
+					<f:facet name="header">
+						Toàn bộ Post 
+					</f:facet>
+
+					<p:column headerText="Id" style="width: 5%;text-align: center">
+						<h:outputText value="#{item.id}" />
+					</p:column>
+
+					<p:column headerText="Tên" style="width: 13%;text-align: center">
+						<h:outputText value="#{item.name}" />
+					</p:column>
+					<p:column headerText="Ngày tạo"
+						style="width: 5%;text-align: center;">
+						<h:outputText value="#{item.createdDate}" />
+					</p:column>
+					<p:column headerText="Ngày sửa"
+						style="width: 5%;text-align: center;">
+						<h:outputText value="#{item.modifiedDate}" />
+					</p:column>
+					<p:column headerText="Công ty" style="width: 7%;text-align: center">
+						<h:outputText value="#{item.user.company.name}" />
+					</p:column>
+					<p:column headerText="Mô tả chi tiết"
+						style="width: 5%;text-align: center">
+						<h:outputText value="Dài quá....." />
+					</p:column>
+					<p:column headerText="Email LH"
+						style="width: 7.5%;text-align: center">
+						<h:outputText value="#{item.contactEmail}" />
+					</p:column>
+					<p:column headerText="Tên LH"
+						style="width: 7.5%;text-align: center"
+						sortBy="#{item.district.name}">
+						<h:outputText value="#{item.contactPeople}" />
+					</p:column>
+					<p:column headerText="Số ĐT LH"
+						style="width: 7.5%;text-align: center"
+						sortBy="#{item.district.name}">
+						<h:outputText value="#{item.contactPhone}" />
+					</p:column>
+					<p:column headerText="Lương từ"
+						style="width: 7.5%;text-align: center"
+						sortBy="#{item.district.name}">
+						<h:outputText value="#{item.salaryFrom}" />
+					</p:column>
+					<p:column headerText="Đến" style="width: 7.5%;text-align: center"
+						sortBy="#{item.district.name}">
+						<h:outputText value="#{item.salaryTo}" />
+					</p:column>
+					<p:column headerText="Địa Chỉ"
+						style="width: 7.5%;text-align: center"
+						sortBy="#{item.district.name}">
+						<h:outputText value="#{item.location.name}" />
+					</p:column>
+					<p:column headerText="Sửa" style="width: 7.5%;text-align: center">
+						<h:link rendered="#{!task.IS_SEEN}"
+							style="text-decoration: none;color: red;font-size: 16px;font-weight: bold"
+							outcome="suabaidang">
+							<i class="fa fa-edit"></i>
+							<f:param name="postid" value="#{item.id}" />
+						</h:link>
+						
+					</p:column>
+
+					<p:column headerText="Xóa" style="width: 7.5%;text-align: center">
+						<p:commandButton update="formDSBaiDang" icon="fa fa-trash"
+							oncomplete="PF('dialogDelete').show();">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{quanLyDangTin.deleted}" />
+						</p:commandButton>
+					</p:column>
+
+
+				</p:dataTable>
+			</h:form>
+			<h:form id="formDeleteCustomer">
+				<p:dialog header="Delete" widgetVar="dialogDelete" modal="true"
+					showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="postDetailDelete" style="text-align:center;">
+						<p:panelGrid columns="2" columnClasses="label,value">
+							<p:commandButton process="formDeleteCustomer"
+								update="formDSBaiDang" value="OK"
+								action="#{quanLyDangTin.delete}" />
+							<p:commandButton value="Cancel"
+								action="#{quanLyDangTin.cancelDelete()}" />
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:dialog>
+			</h:form>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+
+</html>

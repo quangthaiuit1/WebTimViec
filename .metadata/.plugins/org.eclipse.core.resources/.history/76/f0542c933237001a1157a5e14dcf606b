@@ -1,0 +1,389 @@
+package lixco.com.beans;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
+
+import lixco.com.entities.Company;
+import lixco.com.entities.Job;
+import lixco.com.entities.Keyword;
+import lixco.com.entities.Location;
+import lixco.com.entities.Post;
+import lixco.com.entities.Post_Job;
+import lixco.com.entities.Post_Keyword;
+import lixco.com.entities.User;
+import lixco.com.services.CompanyService;
+import lixco.com.services.JobService;
+import lixco.com.services.KeywordService;
+import lixco.com.services.LocationService;
+import lixco.com.services.PostService;
+import lixco.com.services.Post_JobService;
+import lixco.com.services.Post_KeywordService;
+import lixco.com.services.UserService;
+
+@ManagedBean(name = "quanLyDangTin")
+@ViewScoped
+public class QuanLyDangTin implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	private List<Post> postsCustomer;
+	private Post updated;
+	private Post deleted;
+	private long updateLocationId;
+	private long createLocationId;
+	private Post create;
+	private List<Location> locations;
+	private List<Keyword> tags;
+	private List<Keyword> selectedTags;
+	private List<Post_Keyword> specifyTags;
+	private Post detailPost;
+
+	private List<Job> selectedJobs;
+	private List<Job> jobs;
+
+//Upload image
+	private UploadedFile image;
+
+	// Thu muc chua image
+	private String destination = "D:\\WebTimViec\\WebTimViec_WEB\\WebContent\\resources\\images\\";
+//End Upload image
+
+	@Inject
+	private PostService postService;
+
+	@Inject
+	private LocationService locationService;
+
+	@Inject
+	private KeywordService keywordService;
+
+	@Inject
+	private UserService userService;
+
+	@Inject
+	private Post_KeywordService post_keywordService;
+
+	@Inject
+	private JobService jobService;
+
+	@Inject
+	private Post_JobService p_jService;
+
+	@Inject
+	private CompanyService companyService;
+
+	@ManagedProperty(value = "#{loginMBean.userLogin}")
+	private User customer;
+
+	@PostConstruct
+	public void init() {
+
+		postsCustomer = new ArrayList<>();
+		postsCustomer = postService.findAllByCustomer(customer.getId());
+		locations = new ArrayList<>();
+		create = new Post();
+		locations = locationService.findAll();
+		tags = new ArrayList<>();
+		tags = keywordService.findAll();
+		detailPost = new Post();
+		jobs = new ArrayList<>();
+		jobs = jobService.findAllByFilter();
+		try {
+			getParam();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+
+	// Get param from URL
+	public void getParam() {
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+				.getRequest();
+		String postId = request.getParameter("postid");
+		long num = Long.parseLong(postId);
+		detailPost = postService.findById(num);
+		specifyTags = post_keywordService.findByPostId(detailPost.getId());
+	}
+
+//	START CRUD
+
+	public void create() {
+		if (create.getName().equals("") || create.getDetail().equals("")) {
+			PrimeFaces.current().executeScript("PF('dialogCreateError').show()");
+		} else {
+			Date date = new Date();
+			java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+			create.setCreatedDate(sqlDate);
+			create.setLocation(locationService.findById(createLocationId));
+			create.setUser(userService.findById(customer.getId()));
+			Post temp = new Post();
+			if (selectedTags != null && selectedJobs != null) {
+				temp = postService.create(create);
+				for (Keyword tag : selectedTags) {
+					Post_Keyword p_k = new Post_Keyword();
+					p_k.setKeyword(tag);
+					p_k.setPost(temp);
+					post_keywordService.create(p_k);
+					p_k = new Post_Keyword();
+
+				}
+				for (Job job : selectedJobs) {
+					Post_Job p_j = new Post_Job();
+					p_j.setJob(job);
+					p_j.setPost(temp);
+					p_jService.create(p_j);
+					p_j = new Post_Job();
+
+				}
+				create = new Post();
+
+			}
+
+			// Lam moi lai list tags va jobs
+			selectedTags = new ArrayList<>();
+			selectedJobs = new ArrayList<>();
+			create = new Post();
+			PrimeFaces.current().executeScript("PF('dialogCreateSuccess').show()");
+		}
+	}
+	public void updateCompany() {
+		companyService.update(customer.getCompany());
+		PrimeFaces.current().executeScript("PF('dialogCreateSuccessLogo').show()");	
+	}
+
+	public void update() {
+		Date date = new Date();
+		updated.setModifiedDate(date);
+		postService.update(updated);
+		if (updateLocationId != 0) {
+			updated.setLocation(locationService.findById(updateLocationId));
+			updateLocationId = 0;
+
+		}
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Update", "Sửa thành công .");
+		PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+		PrimeFaces.current().dialog().showMessageDynamic(message);
+		updated = new Post();
+		postsCustomer = postService.findAllByCustomer(customer.getId());
+		PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+		PrimeFaces.current().executeScript("PF('dialogUpdateError').show()");
+
+	}
+
+	public void cancelUpdate() {
+		PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+	}
+
+	public void delete() {
+		deleted.setDeleted(true);
+		postService.update(deleted);
+		System.out.println("Đã xóa xong");
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Delete", "Xóa thành công .");
+		PrimeFaces.current().dialog().showMessageDynamic(message);
+		deleted = new Post();
+		postsCustomer = postService.findAllByCustomer(customer.getId());
+		PrimeFaces.current().executeScript("PF('dialogDelete').hide()");
+		PrimeFaces.current().executeScript("PF('dialogDeleteError').show()");
+	}
+
+	public void cancelDelete() {
+		PrimeFaces.current().executeScript("PF('dialogDelete').hide()");
+	}
+
+//	END CRUD
+//UPLOAD IMAGE
+
+	public void upload(FileUploadEvent event) {
+		try {
+			InputStream in = event.getFile().getInputstream();
+			// Ghi inputStream vao 1 OutputStream
+			// Tao outputstream -> new doi tuong xong truyen duong dan + fileName
+			OutputStream out = new FileOutputStream(new File(destination + "/" + event.getFile().getFileName()));
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			while ((read = in.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+
+			in.close();
+			out.flush();
+			out.close();
+			System.err.println("New file created!");
+			
+			Company temp = companyService.findById(customer.getCompany().getId());
+			temp.setLogo(event.getFile().getFileName());
+			companyService.update(temp);	
+			PrimeFaces.current().executeScript("PF('dialogCreateSuccessLogo').show()");
+			
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			PrimeFaces.current().executeScript("PF('dialogCreateErrorLogo').show()");
+		}
+
+	}
+//END UPLOAD IMAGE
+
+	public List<Keyword> completeTag(String input) {
+		String queryLowerCase = input.toLowerCase();
+		return tags.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase))
+				.collect(Collectors.toList());
+	}
+
+	public List<Job> completeJob(String input) {
+		String queryLowerCase = input.toLowerCase();
+		return jobs.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase))
+				.collect(Collectors.toList());
+	}
+
+	public List<Post> getPostsCustomer() {
+		return postsCustomer;
+	}
+
+	public void setPostsCustomer(List<Post> postsCustomer) {
+		this.postsCustomer = postsCustomer;
+	}
+
+	public User getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(User customer) {
+		this.customer = customer;
+	}
+
+	public Post getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Post updated) {
+		this.updated = updated;
+	}
+
+	public Post getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Post deleted) {
+		this.deleted = deleted;
+	}
+
+	public long getUpdateLocationId() {
+		return updateLocationId;
+	}
+
+	public void setUpdateLocationId(long updateLocationId) {
+		this.updateLocationId = updateLocationId;
+	}
+
+	public Post getCreate() {
+		return create;
+	}
+
+	public void setCreate(Post create) {
+		this.create = create;
+	}
+
+	public List<Location> getLocations() {
+		return locations;
+	}
+
+	public void setLocations(List<Location> locations) {
+		this.locations = locations;
+	}
+
+	public long getCreateLocationId() {
+		return createLocationId;
+	}
+
+	public void setCreateLocationId(long createLocationId) {
+		this.createLocationId = createLocationId;
+	}
+
+	public List<Keyword> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Keyword> tags) {
+		this.tags = tags;
+	}
+
+	public List<Keyword> getSelectedTags() {
+		return selectedTags;
+	}
+
+	public void setSelectedTags(List<Keyword> selectedTags) {
+		this.selectedTags = selectedTags;
+	}
+
+	public Post getDetailPost() {
+		return detailPost;
+	}
+
+	public void setDetailPost(Post detailPost) {
+		this.detailPost = detailPost;
+	}
+
+	public List<Post_Keyword> getSpecifyTags() {
+		return specifyTags;
+	}
+
+	public void setSpecifyTags(List<Post_Keyword> specifyTags) {
+		this.specifyTags = specifyTags;
+	}
+
+	public List<Job> getSelectedJobs() {
+		return selectedJobs;
+	}
+
+	public void setSelectedJobs(List<Job> selectedJobs) {
+		this.selectedJobs = selectedJobs;
+	}
+
+	public List<Job> getJobs() {
+		return jobs;
+	}
+
+	public void setJobs(List<Job> jobs) {
+		this.jobs = jobs;
+	}
+
+	public UploadedFile getImage() {
+		return image;
+	}
+
+	public void setImage(UploadedFile image) {
+		this.image = image;
+	}
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
+
+}

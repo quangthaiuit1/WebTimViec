@@ -1,0 +1,35 @@
+package lixco.com.entities;
+
+public class AllowAccess {
+	private boolean isCreate;
+	private boolean isUpdate;
+	private boolean isDelete;
+	private boolean isRead;
+	
+	public boolean isCreate() {
+		return isCreate;
+	}
+	public void setCreate(boolean isCreate) {
+		this.isCreate = isCreate;
+	}
+	public boolean isUpdate() {
+		return isUpdate;
+	}
+	public void setUpdate(boolean isUpdate) {
+		this.isUpdate = isUpdate;
+	}
+	public boolean isDelete() {
+		return isDelete;
+	}
+	public void setDelete(boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+	public boolean isRead() {
+		return isRead;
+	}
+	public void setRead(boolean isRead) {
+		this.isRead = isRead;
+	}
+	
+	
+}

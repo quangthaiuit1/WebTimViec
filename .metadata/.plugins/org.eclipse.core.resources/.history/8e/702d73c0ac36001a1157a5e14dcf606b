@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="common.xhtml">
+		<ui:define name="content">
+			<c:if test="${nameUser != null}">
+				<h:form id="formTaoTaiKhoan"
+					style="width: 80%;margin: 0 auto;margin-top: 50px">
+					<h6 style="text-align: center; padding: 5px; width: 100%">UPLOAD
+						LOGO CÔNG TY</h6>
+					<div class="ui-g">
+						<div class="ui-g-12 ui-md-6 ui-lg-3">Logo Công ty:</div>
+						<div class="ui-g-12 ui-md-6 ui-lg-9">
+							<p:growl id="messages" showDetail="true" />
+							<h:form enctype="multipart/form-data">
+								<p:fileUpload fileUploadListener="#{quanLyDangTin.upload}"
+									value="#{quanLyDangTin.image}" mode="advanced"
+									update="messages" sizeLimit="100000"
+									allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+								<p:growl id="messages" showDetail="true" />
+
+							</h:form>
+						</div>
+						<br></br>
+
+					</div>
+
+				</h:form>
+				<h:form id="updateCongTy" style="width: 80%">
+					<h6 style="text-align: center; padding: 5px; width: 100%">SỬA
+						THÔNG TIN CÔNG TY</h6>
+					<div class="ui-g">
+						<div class="ui-g-12 ui-md-6 ui-lg-3">Tên Công ty:</div>
+						<div class="ui-g-12 ui-md-6 ui-lg-9">
+							<p:inputText style="width: 100%!important" id="inputCompanyName"
+								value="#{registrationMBean.newCompany.name}" />
+						</div>
+					</div>
+					<div class="ui-g">
+						<div class="ui-g-12 ui-md-6 ui-lg-3">Giới thiệu về Công ty:</div>
+						<div class="ui-g-12 ui-md-6 ui-lg-9">
+							<p:inputTextarea rows="10" cols="50" style="width: 100%"
+								id="inputCompanyInfo"
+								value="#{registrationMBean.newCompany.information}" />
+						</div>
+					</div>
+
+
+					<div class="ui-g">
+						<div class="ui-g-12 ui-md-6 ui-lg-3">Địa chỉ:</div>
+						<div class="ui-g-12 ui-md-6 ui-lg-9">
+							<p:inputText style="width: 100%!important"
+								id="inputCompanyAdress"
+								value="#{registrationMBean.newCompany.adress}" />
+						</div>
+					</div>
+
+					<div class="ui-g">
+						<div class="ui-g-3 ui-md-3 ui-lg-3"
+							style="margin-left: 50%; background-color: #eee">
+							<p:commandButton value="Tạo"
+								action="#{registrationMBean.Registration()}" style="width:200px"
+								update="formTaoTaiKhoan" />
+						</div>
+					</div>
+				</h:form>
+				<br></br>
+
+				<h:form id="formCreateSuccesslogo">
+					<p:dialog style="color:red;text-align:center" header="Thông báo"
+						widgetVar="dialogCreateSuccessLogo" modal="true" showEffect="fade"
+						hideEffect="fade" resizable="false">
+						<p:outputPanel id="postDetailDelete" style="text-align:center;">
+							<p:panelGrid columns="1" columnClasses="label,value">
+								<span style="color: red">Thành Công</span>
+								<br></br>
+							</p:panelGrid>
+						</p:outputPanel>
+					</p:dialog>
+				</h:form>
+				<h:form id="formCreateErrorLogo">
+					<p:dialog style="color:red;text-align:center" header="Thông báo"
+						widgetVar="dialogCreateErrorLogo" modal="true" showEffect="fade"
+						hideEffect="fade" resizable="false">
+						<p:outputPanel id="postDetailDelete" style="text-align:center;">
+							<p:panelGrid columns="1" columnClasses="label,value">
+								<span style="color: red">Không thành công!</span>
+							</p:panelGrid>
+						</p:outputPanel>
+					</p:dialog>
+				</h:form>
+			</c:if>
+			<c:if test="${nameUser == null}">
+				<h4 style="color: red; text-align: center; margin-top: 30px">Vui
+					lòng Đăng nhập hoặc Tạo tài khoản</h4>
+			</c:if>
+		</ui:define>
+	</ui:composition>
+</h:body>
+
+</html>

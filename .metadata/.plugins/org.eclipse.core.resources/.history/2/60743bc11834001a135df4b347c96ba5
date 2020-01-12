@@ -1,0 +1,251 @@
+package lixco.com.beans;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import lixco.com.entities.Role;
+import lixco.com.entities.Role_Permission;
+import lixco.com.entities.User;
+import lixco.com.entities.User_Role;
+import lixco.com.services.RoleService;
+import lixco.com.services.Role_PermissionService;
+import lixco.com.services.UserService;
+import lixco.com.services.User_RoleService;
+
+@ManagedBean
+@SessionScoped
+public class LoginMBean implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+	private User user = new User();
+	private User userLogin = new User();
+	private List<User> users = new ArrayList<>();
+	private List<Role_Permission> r_ps = new ArrayList<>();
+	private String username;
+	private String password;
+	private String message;
+	private boolean isAdmin;
+	//Toan bo user
+	private List<User> allAccount;
+	
+	//Toan bo role
+	private List<Role> roles;
+	//Danh sach role duoc chon
+	private List<Role> selectedRoles;
+	
+	//Variable Cap quyen va phan quyen
+	private List<User> selectedUsers;
+	
+	private List<User_Role> userRoleList = new ArrayList<>();	
+	@Inject 
+	private Role_PermissionService rolePermissionService;
+	
+	@Inject
+	private UserService userService;
+	
+	@Inject User_RoleService u_rService;
+	
+	@Inject RoleService roleService;
+		
+	@PostConstruct
+	public void init(){
+		user = new User();
+		userLogin = new User();
+		roles = new ArrayList<>();
+		roles = roleService.findAllByFilter();
+		allAccount = new ArrayList<>();
+		allAccount = userService.findAllByFilter();
+	}
+	
+	
+	public void checkUsernamePass() throws IOException{
+		FacesContext context = FacesContext.getCurrentInstance();
+		userLogin = userService.checkUsernamePassword(username, password);
+		if(userLogin == null) {
+			 message = "Đăng nhập không thành công.";
+			 FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
+			}
+		else {
+			userRoleList = u_rService.findByUserId(userLogin.getId());
+			List<Long> roles = new ArrayList<>();
+			for (User_Role user_role : userRoleList) {
+				roles.add(user_role.getRole().getId());
+			}
+
+			r_ps = rolePermissionService.findPermissionByListRole(roles);
+			context.getExternalContext().getSessionMap().put("username", userLogin.getUsername());
+			context.getExternalContext().getSessionMap().put("userId", userLogin.getId());
+			context.getExternalContext().getSessionMap().put("nameUser", userLogin.getName());
+			
+			//Kiem tra co phai admin hay khong ? phai thi put vao session
+			for(User_Role user_role : userRoleList) {
+				if(user_role.getRole().getName().equals("admin")) {
+					isAdmin = true;
+					context.getExternalContext().getSessionMap().put("isAdmin", true);
+					break;
+				}
+			}
+			if(!isAdmin) {
+				context.getExternalContext().getSessionMap().put("isAdmin", false);
+			}
+
+			context.getExternalContext().getSessionMap().put("permissions", r_ps);
+			
+			HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			for (User_Role u_r : userRoleList) {
+				if(u_r.getRole().getName().equals("Customer")) {
+					response.sendRedirect(request.getContextPath());
+					return;
+				}
+			}
+			response.sendRedirect(request.getContextPath() + "/pages/admin/index.xhtml");
+		}
+	}
+//Dang xuat
+	public void logOut() throws Throwable {
+		// Invalidate session of a sessionscoped managed bean
+		this.userLogin = null;
+		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+		FacesContext fContext = FacesContext.getCurrentInstance();
+		ExternalContext extContext = fContext.getExternalContext();
+		extContext.redirect("http://192.168.0.132:8380/WebTimViec_WEB/");
+
+	}
+	
+//Cap quyen
+	public void capQuyen() {
+		allAccount = new ArrayList<>();
+		allAccount = userService.findAllByFilter();
+	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public User getUserLogin() {
+		return userLogin;
+	}
+
+	public void setUserLogin(User userLogin) {
+		this.userLogin = userLogin;
+	}
+
+	
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
+	public List<Role_Permission> getR_ps() {
+		return r_ps;
+	}
+
+	public void setR_ps(List<Role_Permission> r_ps) {
+		this.r_ps = r_ps;
+	}
+	public String getMessage() {
+        return message;
+    }
+ 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+
+	public boolean isAdmin() {
+		return isAdmin;
+	}
+
+
+	public void setAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+
+
+	public List<User> getAllAccount() {
+		return allAccount;
+	}
+
+
+	public void setAllAccount(List<User> allAccount) {
+		this.allAccount = allAccount;
+	}
+
+
+	public List<User> getSelectedUsers() {
+		return selectedUsers;
+	}
+
+
+	public void setSelectedUsers(List<User> selectedUsers) {
+		this.selectedUsers = selectedUsers;
+	}
+
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+
+	
+
+	public List<Role> getSelectedRoles() {
+		return selectedRoles;
+	}
+
+
+	public void setSelectedRoles(List<Role> selectedRoles) {
+		this.selectedRoles = selectedRoles;
+	}
+
+
+	public List<User_Role> getUserRoleList() {
+		return userRoleList;
+	}
+
+
+	public void setUserRoleList(List<User_Role> userRoleList) {
+		this.userRoleList = userRoleList;
+	}
+	
+	
+}

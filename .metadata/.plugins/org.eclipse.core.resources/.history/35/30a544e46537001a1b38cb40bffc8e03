@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:body id="page-top">
+
+	<ui:composition template="/pages/admin/pagesadmin/common.xhtml">
+		<ui:define name="content">
+			<h:form id="form">
+				<div class="ui-g">
+					<div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3">
+
+						<p:dataTable id="user" var="user" value="#{capquyen.allAccount}"
+							rowKey="#{user.id}" selection="#{capquyen.selectedUser}"
+							selectionMode="single" style="margin-left: 10%">
+							<p:ajax event="rowSelect" listener="#{capquyen.xemQuyen}"
+								update="form:userRole" />
+							<p:column headerText="ID" style="width: 20%;">
+								<h:outputText value="#{user.id}" />
+							</p:column>
+							<p:column headerText="Danh sách nhân viên" style="width:80%">
+								<h:outputText value="#{user.name}" />
+							</p:column>
+						</p:dataTable>
+
+
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3">
+						<p:dataTable id="userRole" var="role" value="#{capquyen.roles}"
+							rowKey="#{role.id}" selection="#{capquyen.selectedRoles}"
+							style=" margin-left: 10%;">
+							<p:column selectionMode="multiple"
+								style="width:16px;text-align:center;width:20%" />
+							<p:column headerText="Quyền" style="width:60%">
+								<h:outputText value="#{role.name}" />
+							</p:column>
+							<p:column headerText="Xóa" style="width: 20%;text-align: center">
+								<p:commandButton update="form" icon="fa fa-trash"
+									oncomplete="PF('dialogDelete').show();">
+									<f:setPropertyActionListener value="#{role}"
+										target="#{capquyen.deletedRole}" />
+								</p:commandButton>
+							</p:column>
+							<f:facet name="footer">
+								<p:commandButton process="userRole" icon="pi pi-search"
+									action="#{capquyen.updateQuyen}" update="form:user"
+									value="Hoàn tất" style="margin-left: 37%" />
+							</f:facet>
+						</p:dataTable>
+
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+				</div>
+
+
+			</h:form>
+			<h:form id="form2">
+				<div class="ui-g">
+					<div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3">
+						<p:dataTable id="roleDetail2" var="roleDetail"
+							value="#{capquyen.roles}" rowKey="#{roleDetail.id}"
+							selection="#{capquyen.selectedRole}" selectionMode="single"
+							style="margin-left: 5%">
+							<p:ajax event="rowSelect"
+								listener="#{capquyen.xemQuyenTruyCapForm}"
+								update="form2:roleForm2" />
+							<p:column headerText="ID" style="width: 20%;">
+								<h:outputText value="#{roleDetail.id}" />
+							</p:column>
+							<p:column headerText="Danh sách các Quyền" style="width:80%">
+								<h:outputText value="#{roleDetail.name}" />
+							</p:column>
+						</p:dataTable>
+
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3">
+						<p:dataTable id="roleForm2" var="permission"
+							value="#{capquyen.rolePermissionList}" rowKey="#{permission.id}"
+							style=" margin-left: 5%;">
+							<p:column headerText="Form" style="width:50%">
+								<h:outputText value="#{permission.permission.name}" />
+							</p:column>
+							<p:column headerText="Truy cập" style="width:12.5%">
+								<p:selectBooleanCheckbox value="#{permission.read}" />
+							</p:column>
+							<p:column headerText="Thêm" style="width:12.5%">
+								<p:selectBooleanCheckbox value="#{permission.create}" />
+							</p:column>
+							<p:column headerText="Sửa" style="width:12.5%">
+								<p:selectBooleanCheckbox value="#{permission.update}" />
+							</p:column>
+
+							<p:column headerText="Xóa" style="width:12.5%">
+								<p:selectBooleanCheckbox value="#{permission.delete}" />
+							</p:column>
+							<f:facet name="footer">
+								<p:commandButton process="roleForm2" icon="pi pi-search"
+									action="#{capquyen.updateQuyenTruyCap}"
+									update="form2:roleDetail2" value="Hoàn tất"
+									style="margin-left: 37%" />
+							</f:facet>
+						</p:dataTable>
+
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+				</div>
+
+
+			</h:form>
+			<h:form id="formUpdateSuccess">
+				<p:dialog header="Thông báo" widgetVar="dialogUpdateSuccess"
+					modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="editUserRole" style="text-align:center;">
+						<p:panelGrid columns="2" columnClasses="label,value">
+							<span style="color: red">Cập nhật thành công!</span>
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:dialog>
+			</h:form>
+			<h:form id="formUpdateError">
+				<p:dialog header="Thông báo" widgetVar="dialogUpdateError"
+					modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="editUserRole" style="text-align:center;">
+						<p:panelGrid columns="2" columnClasses="label,value">
+							<span style="color: red">Không có quyền!</span>
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:dialog>
+			</h:form>
+			<h:form id="formDeleteCustomer">
+				<p:dialog header="Delete" widgetVar="dialogDelete" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="postDetailDelete" style="text-align:center;">
+			            <p:panelGrid  columns="2"  columnClasses="label,value">
+		              		<p:commandButton  process="form:userRole" update="form:userRole"  value="OK" action="#{capquyen.deleteRole()}" /> 
+		       				<p:commandButton value="Cancel" action="#{capquyen.cancelDelete}" /> 
+			            </p:panelGrid>
+			        </p:outputPanel>
+				</p:dialog>
+			</h:form>
+			<p:separator />
+		</ui:define>
+	</ui:composition>
+
+
+</h:body>
+
+</html>

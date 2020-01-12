@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="WebTimViec_EAR">
+        <wb-resource deploy-path="/" source-path="/EarContent" tag="defaultRootSource"/>
+        <dependent-module archiveName="WebTimViec_WEB.war" deploy-path="/" handle="module:/resource/WebTimViec_WEB/WebTimViec_WEB">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="WebTimViec_JPA.jar" deploy-path="/lib" handle="module:/resource/WebTimViec_JPA/WebTimViec_JPA">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="WebTimViec_EJB.jar" deploy-path="/" handle="module:/resource/WebTimViec_EJB/WebTimViec_EJB">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>
