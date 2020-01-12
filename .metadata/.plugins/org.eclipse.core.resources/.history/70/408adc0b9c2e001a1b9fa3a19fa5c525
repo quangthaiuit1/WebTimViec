@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<title>LIXCO</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!-- Bootstrap core CSS -->
+	<h:outputStylesheet library="bootstrap"
+		name="web/css/bootstrap.min.css" />
+	<h:outputStylesheet library="bootstrap" name="web/css/style-css.css" />
+	<h:outputStylesheet library="bootstrap" name="web/css/css-search.css" />
+
+	<!-- Custom styles for this template -->
+	<h:outputStylesheet library="bootstrap"
+		name="web/css/modern-business.css" />
+
+</h:head>
+<h:body class="TaoBaiDang">
+	<ui:composition template="common.xhtml">
+		<ui:define name="content">
+			<div style="width: 50%; margin: 0 auto; margin-top: 20px">
+				<p:tabView>
+					<p:tab title="THÔNG TIN">
+						<h:panelGrid columns="2" cellpadding="10">
+							<p:graphicImage name="demo/images/godfather/godfather1.jpg" />
+							<h:outputText value="#{quanLyDangTin.detailPost.name}" />
+						</h:panelGrid>
+					</p:tab>
+					<p:tab title="CÔNG TY">
+						<h:panelGrid columns="2" cellpadding="10">
+							<div class="row" style="margin: 0 auto; text-align: center">
+								<h:panelGrid styleClass="centered">
+									<h:graphicImage library="images"
+										name="#{quanLyDangTin.detailPost.user.company.logo}"
+										style="text-align: center; margin: 0 auto" />
+								</h:panelGrid>
+							</div>
+						
+							
+							<div class="row">
+								<h:outputText value="#{quanLyDangTin.detailPost.user.company.information}" />
+							</div>
+							<div class="row">
+								<h:outputText value="#{quanLyDangTin.detailPost.user.company.adress}" />
+							</div>
+						</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+			</div>
+		</ui:define>
+	</ui:composition>
+</h:body>
+
+</html>

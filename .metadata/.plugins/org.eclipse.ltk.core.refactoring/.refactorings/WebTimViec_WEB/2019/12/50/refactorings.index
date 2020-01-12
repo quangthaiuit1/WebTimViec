@@ -1,0 +1,25 @@
+1575793135127	Rename resource 'vendo'
+1575795196776	Copy folder
+1575795244827	Copy file
+1575795516807	Copy folder
+1575795530656	Delete element
+1575795607600	Delete element
+1575795619961	Copy folder
+1575795648940	Copy folder
+1575795657257	Delete element
+1575795990220	Copy file
+1575796191158	Copy file
+1575796432635	Delete element
+1575796439901	Delete element
+1575797170912	Move 'timviec.xhtml' to 'pages'
+1575799589612	Rename resource 'main.css'
+1576030282682	Rename compilation unit 'Converter.java'
+1576197026650	Move 'login.xhtml' to 'web'
+1576199094602	Move 'vendor' to 'web'
+1576199097500	Move 'js' to 'web'
+1576199099307	Move 'css' to 'web'
+1576204852569	Delete element
+1576206149022	Move 'content.xhtml' to 'admin'
+1576206618153	Move 'post.xhtml' to 'admin'
+1576219274226	Encapsulate field 'userRoles'
+1576222579005	Encapsulate field 'user'

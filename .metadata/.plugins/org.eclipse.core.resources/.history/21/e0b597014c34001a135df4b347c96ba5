@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:body id="page-top">
+
+	<ui:composition template="/pages/admin/pagesadmin/common.xhtml">
+
+		<ui:define name="content">
+
+			<h:form id="display" style="width:80%;margin: 0 auto">
+				<h3 style="text-align: center; margin-bottom: 5%">CẤP QUYỀN</h3>
+				<p:separator />
+				<ui:repeat var="account" value="#{capquyen.allAccount}">
+					<div class="ui-g">
+						<div class="ui-g-4" >
+							<h:outputText style="vertical-align: middle!important;" value="#{account.name}" />
+						</div>
+
+						<div class="ui-g-8">
+							<p:selectManyCheckbox id="allow"
+								value="#{capquyen.selectedRoles}" layout="responsive"
+								columns="4" style="font-size:12px">
+								<f:selectItems value="#{capquyen.roles}" var="role"
+									itemLabel="#{role.name}" itemValue="#{role}" />
+							</p:selectManyCheckbox>
+						</div>
+					</div>
+				</ui:repeat>
+				
+				<p:dataTable id="pDataTableAll" var="item" paginatorPosition="bottom"
+					paginator="true" rows="20" stickyHeader="true" stickyTopAt=".layout-topbar"
+					value="#{postMBean.test}" style="width: 90%;margin: 0 auto; font-size: 12px;">
+				
+
+					<p:column headerText="Id" style="width: 5%;text-align: center">
+						<h:outputText value="#{item.permission.link}" />
+					</p:column>
+
+					<p:column headerText="Truy câp" style="width: 13%;text-align: center">
+						<p:selectBooleanCheckbox value="#{item.read}"/>
+					</p:column>
+					<p:column headerText="Cập nhật" style="width: 5%;text-align: center;">
+						<p:selectBooleanCheckbox value="#{item.update}"/>
+					</p:column>
+			
+				
+				</p:dataTable>
+
+
+				<p:separator />
+
+				<p:commandButton value="Submit" update="display" icon="pi pi-check" style="margin: 0 auto"/>
+
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+
+</h:body>
+
+</html>

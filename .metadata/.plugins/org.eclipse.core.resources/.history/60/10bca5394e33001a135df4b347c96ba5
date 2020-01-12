@@ -1,0 +1,205 @@
+package lixco.com.beans;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.ServletContext;
+
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
+import org.primefaces.shaded.commons.io.IOUtils;
+
+import lixco.com.entities.Company;
+import lixco.com.entities.Role;
+import lixco.com.entities.User;
+import lixco.com.entities.User_Role;
+import lixco.com.services.RoleService;
+import lixco.com.services.UserService;
+import lixco.com.services.User_RoleService;
+
+@ManagedBean
+@SessionScoped
+public class RegistrationMBean implements Serializable{
+	private User newUser;
+	private Company newCompany;
+	private String username;
+	private String name;
+	private String password;
+	private String email;
+	private String companyName;
+	private String companyLogo;
+	private String companyInfo;
+	private String companyAdress;
+	private UploadedFile image;
+	
+	
+	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private UserService userService;
+	
+	@Inject
+	private User_RoleService u_rService;
+	
+	@Inject 
+	private RoleService roleService;
+	
+	@PostConstruct
+	public void init() {
+		newUser = new User();
+		newCompany = new Company();
+		
+	}
+	
+	public void handleFileUpload(FileUploadEvent event) {  
+		FacesMessage message = new FacesMessage("Succesful", event.getFile().getFileName() + " is uploaded.");  
+		FacesContext.getCurrentInstance().addMessage(null, message);  
+		}  
+	
+	public void fileUploadListener(FileUploadEvent e){
+		// Get uploaded file from the FileUploadEvent
+		this.image = e.getFile();
+	    String fileName = image.getFileName();
+	    String contentType = image.getContentType();
+	    byte[] contents = image.getContents(); // Or getInputStream()
+
+		// Print out the information of the file
+		System.out.println("Uploaded File Name Is :: "+ fileName +" :: Uploaded File Size :: "+image.getSize());
+	}
+	//Save image
+	 public void upload() {
+	        if (image != null) {
+	            FacesMessage message = new FacesMessage("Successful", image.getFileName() + " is uploaded.");
+	            FacesContext.getCurrentInstance().addMessage(null, message);
+	        }
+	        else System.out.println("khong vao duoc");
+    }
+	public void Registration() {
+		if(newUser.getUsername().equals("") && newUser.getPassword().equals("")) {
+			PrimeFaces.current().executeScript("PF('dialogCreateErrorRegist').show()");
+		}else {
+			
+			newUser.setCompany(newCompany);
+			//Tao User de insert vao bang User_role
+			User userTemp = userService.create(newUser);
+			
+			//Khoi tao lai doi tuong newUser
+			newUser = new User();
+			
+			Role roleTemp = new Role();
+			//Tao User_role de insert
+			User_Role u_r = new User_Role();
+			u_r.setUser(userTemp);
+			roleTemp = roleService.findById(4);
+			u_r.setRole(roleTemp);
+			u_rService.create(u_r);
+			PrimeFaces.current().executeScript("PF('dialogCreateSuccessRegist').show()");
+		}
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getCompanyLogo() {
+		return companyLogo;
+	}
+
+	public void setCompanyLogo(String companyLogo) {
+		this.companyLogo = companyLogo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCompanyInfo() {
+		return companyInfo;
+	}
+
+	public void setCompanyInfo(String companyInfo) {
+		this.companyInfo = companyInfo;
+	}
+
+	public String getCompanyAdress() {
+		return companyAdress;
+	}
+
+	public void setCompanyAdress(String companyAdress) {
+		this.companyAdress = companyAdress;
+	}
+
+	public UploadedFile getImage() {
+		return image;
+	}
+
+	public void setImage(UploadedFile image) {
+		this.image = image;
+	}
+
+	public User getNewUser() {
+		return newUser;
+	}
+
+	public void setNewUser(User newUser) {
+		this.newUser = newUser;
+	}
+
+	public Company getNewCompany() {
+		return newCompany;
+	}
+
+	public void setNewCompany(Company newCompany) {
+		this.newCompany = newCompany;
+	}
+	
+	
+	
+}

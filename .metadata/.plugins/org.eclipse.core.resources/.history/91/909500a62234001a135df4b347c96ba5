@@ -1,0 +1,62 @@
+package lixco.com.beans;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+
+import lixco.com.entities.Role;
+import lixco.com.entities.User;
+import lixco.com.entities.User_Role;
+import lixco.com.services.RoleService;
+import lixco.com.services.Role_PermissionService;
+import lixco.com.services.UserService;
+import lixco.com.services.User_RoleService;
+
+@ManagedBean
+@ViewScoped
+public class Capquyen implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+	
+	//Toan bo user
+	private List<User> allAccount;
+	
+	//Toan bo role
+	private List<Role> roles;
+	//Danh sach role duoc chon
+	private List<Role> selectedRoles;
+	
+	//Variable Cap quyen va phan quyen
+	private List<User> selectedUsers;
+	
+	@Inject 
+	private Role_PermissionService rolePermissionService;
+	
+	@Inject
+	private UserService userService;
+	
+	@Inject User_RoleService u_rService;
+	
+	@Inject RoleService roleService;
+
+	
+	@PostConstruct
+	public void init() {
+		roles = new ArrayList<>();
+		roles = roleService.findAllByFilter();
+		allAccount = new ArrayList<>();
+		allAccount = userService.findAllByFilter();
+		List<User_Role> user_Roles = new ArrayList<>();
+			for (int j = 0; j < allAccount.size(); j++) {
+				user_Roles = u_rService.findByUserId(allAccount.get(j).getId());
+			}
+			System.out.println(user_Roles.size());
+	}
+	
+	
+}

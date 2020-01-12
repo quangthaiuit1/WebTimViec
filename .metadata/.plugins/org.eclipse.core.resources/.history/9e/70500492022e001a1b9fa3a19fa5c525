@@ -1,0 +1,33 @@
+package lixco.com.services;
+
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.persistence.EntityManager;
+
+import lixco.com.entities.Post_Keyword;
+
+@Stateless
+@TransactionManagement(value = TransactionManagementType.CONTAINER)
+public class Post_KeywordService extends AbstractService<Post_Keyword>{
+
+	@Override
+	protected Class<Post_Keyword> getEntityClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected EntityManager getEntityManager() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected SessionContext getUt() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

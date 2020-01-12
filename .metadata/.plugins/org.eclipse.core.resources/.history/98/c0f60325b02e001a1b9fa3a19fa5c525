@@ -1,0 +1,23 @@
+package lixco.com.beans;
+
+import java.io.Serializable;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ManagedBean
+@ViewScoped
+public class RegistrationMBean implements Serializable{
+	private String username;
+	private String password;
+	private String email;
+	private String companyName;
+	private String companyLogo;
+	
+	private static final long serialVersionUID = 1L;
+	
+	public void Registration() {
+		
+	}
+
+}

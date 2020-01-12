@@ -1,0 +1,289 @@
+package lixco.com.beans;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+
+import org.primefaces.PrimeFaces;
+
+import lixco.com.entities.Job;
+import lixco.com.entities.Location;
+import lixco.com.entities.Post;
+import lixco.com.entities.Role_Permission;
+import lixco.com.services.JobService;
+import lixco.com.services.LocationService;
+import lixco.com.services.PostService;
+import lixco.com.services.Role_PermissionService;
+
+@ManagedBean
+@ViewScoped
+public class PostMBean implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	private List<Post> posts;
+	private List<Location> locations;
+	private List<Job> jobs;
+	private Job job;
+	
+	//Tim kiem
+	private Post post;
+	private Location searchLocation;
+	private Job searchJob;
+	private String nameSearched;
+	
+	private Location location;
+	private Post deleted;
+	private Post updated;
+	private Post updatedCrud;
+	private int updateLocationId;
+	private List<Post> searchPosts;
+
+	@Inject
+	private PostService postService;
+
+	@Inject
+	private LocationService locationService;
+
+	@Inject
+	private JobService jobService;
+
+	@Inject
+	private Role_PermissionService r_pService;
+
+	@PostConstruct
+	public void init() {
+		job = new Job();
+		posts = new ArrayList<>();
+		posts = postService.findAllByFilter();
+		location = new Location();
+		locations = new ArrayList<>();
+		locations = locationService.findAll();
+		jobs = new ArrayList<>();
+		jobs = jobService.findAll();
+
+		searchPosts = new ArrayList<>();
+		searchPosts = postService.findAllByFilter();
+
+	}
+
+//AUTOCOMPLETE
+	//Chuc nang tim kiem
+	public void showpost() {
+		posts = new ArrayList<>();
+		//Neu thanh search khong nhap gi ca
+		if (post.equals("") || post == null || searchLocation.equals("") || searchLocation == null ||  searchJob.equals("") || searchJob == null ) {
+			posts = searchPosts;
+			return;
+		} 
+		//Thanh search chi nhap o bai viet
+		if( !(post.getName().equals("")) && searchLocation.getName().equals("") && searchJob.getName().equals("") ) {
+			posts = postService.findByNamePost(nameSearched);
+			return;
+		}
+//		//Thanh search nhap o bai viet va o dia diem
+//		if( (post.getName().equals("")) && !(searchLocation.getName().equals("")) && searchJob.getName().equals("")) {
+//			
+//		}
+//		else {
+//			
+//		}
+	}
+	//Tim kiem theo ten bai post
+	public List<String> searchPost(String input){
+		List<String> result = new ArrayList<>();
+		List<Post> search = new ArrayList<>();
+		search = postService.findByNamePost(input);
+		for (Post post : search) {
+			result.add(post.getName());
+		}
+		return result;
+	}
+	
+	//Tim kiem doi tuong Post
+	public List<Post> completePost(String input) {
+		String queryLowerCase = input.toLowerCase();
+		return searchPosts.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase))
+				.collect(Collectors.toList());
+	}
+
+	public List<Job> completeJob(String input) {
+		String queryLowerCase = input.toLowerCase();
+		return jobs.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase))
+				.collect(Collectors.toList());
+	}
+
+	public List<Location> completeLocation(String input) {
+
+		String queryLowerCase = input.toLowerCase();
+		return locations.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase))
+				.collect(Collectors.toList());
+	}
+//END AUTOCOMPLETE
+
+	public String returnIndex() {
+		return "post";
+	}
+
+//	START CRUD
+	public void update() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		List<Role_Permission> permissions = new ArrayList<>();
+		permissions = (ArrayList<Role_Permission>) context.getExternalContext().getSessionMap().get("permissions");
+		for (Role_Permission r : permissions) {
+			if (r.getPermission().getLink().equals("/pages/admin/pagesadmin/post.xhtml") && r.isUpdate() == true) {
+				Date date = new Date();
+				updated.setModifiedDate(date);
+				postService.update(updated);
+				if (updateLocationId != 0) {
+					updated.setLocation(locationService.findById(updateLocationId));
+					updateLocationId = 0;
+
+				}
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Update", "Sửa thành công .");
+				PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+				PrimeFaces.current().dialog().showMessageDynamic(message);
+				posts = postService.findAllByFilter();
+				return;
+			}
+		}
+		PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+		PrimeFaces.current().executeScript("PF('dialogUpdateError').show()");
+
+	}
+
+	public void cancelUpdate() {
+		PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+	}
+
+	public void delete() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		List<Role_Permission> permissions = new ArrayList<>();
+		permissions = (ArrayList<Role_Permission>) context.getExternalContext().getSessionMap().get("permissions");
+		for (Role_Permission r : permissions) {
+			if (r.getPermission().getLink().equals("/pages/admin/pagesadmin/post.xhtml") && r.isDelete() == true) {
+				deleted.setDeleted(true);
+				postService.update(deleted);
+				System.out.println("Đã xóa xong");
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Delete", "Xóa thành công .");
+				PrimeFaces.current().dialog().showMessageDynamic(message);
+				posts = postService.findAllByFilter();
+				return;
+			}
+		}
+		PrimeFaces.current().executeScript("PF('dialogDelete').hide()");
+		PrimeFaces.current().executeScript("PF('dialogDeleteError').show()");
+	}
+
+	public void cancelDelete() {
+		PrimeFaces.current().executeScript("PF('dialogDelete').hide()");
+	}
+
+//	END CRUD
+
+	public List<Post> getPosts() {
+		return posts;
+	}
+
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
+
+	public List<Location> getLocations() {
+		return locations;
+	}
+
+	public void setLocations(List<Location> locations) {
+		this.locations = locations;
+	}
+
+	public List<Job> getJobs() {
+		return jobs;
+	}
+
+	public void setJobs(List<Job> jobs) {
+		this.jobs = jobs;
+	}
+
+	public Job getJob() {
+		return job;
+	}
+
+	public void setJob(Job job) {
+		this.job = job;
+	}
+
+	public Post getPost() {
+		return post;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
+	}
+
+	public Post getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Post deleted) {
+		this.deleted = deleted;
+	}
+
+	public Post getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Post updated) {
+		this.updated = updated;
+	}
+
+	public int getUpdateLocationId() {
+		return updateLocationId;
+	}
+
+	public void setUpdateId(int updateLocationId) {
+		this.updateLocationId = updateLocationId;
+	}
+
+	public List<Post> getSearchPosts() {
+		return searchPosts;
+	}
+
+	public void setSearchPosts(List<Post> searchPosts) {
+		this.searchPosts = searchPosts;
+	}
+
+	public Location getSearchLocation() {
+		return searchLocation;
+	}
+
+	public void setSearchLocation(Location searchLocation) {
+		this.searchLocation = searchLocation;
+	}
+
+	public Job getSearchJob() {
+		return searchJob;
+	}
+
+	public void setSearchJob(Job searchJob) {
+		this.searchJob = searchJob;
+	}
+
+	public String getNameSearched() {
+		return nameSearched;
+	}
+
+	public void setNameSearched(String nameSearched) {
+		this.nameSearched = nameSearched;
+	}
+	
+	
+}

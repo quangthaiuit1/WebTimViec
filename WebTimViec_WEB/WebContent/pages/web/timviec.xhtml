@@ -1,0 +1,12 @@
+<b:navbarLinks pull="right" styleClass="hidden-xs">
+						<b:navLink style="color:black" value="Trang chủ" href="http://192.168.0.132:8380/WebTimViec_WEB/pages/login/login.xhtml"></b:navLink>
+						<b:navLink style="color:black" value="Giới thiệu" href="http://192.168.0.132:8380/WebTimViec_WEB/pages/login/login.xhtml"></b:navLink>
+						<b:navLink style="color:black" value="Liên hệ" href="http://192.168.0.132:8380/WebTimViec_WEB/pages/login/login.xhtml"></b:navLink>
+						<c:if test="${nameUser == null}">
+							<b:navLink style="color:black" value="Đăng nhập" href="http://192.168.0.132:8380/WebTimViec_WEB/pages/login/login.xhtml"/>
+						</c:if>
+						<c:if test="${nameUser != null}">
+							<b:navLink style="color:black" href="#">Xin chào: #{nameUser}</b:navLink>
+							<p:commandButton value="Thoát" action="#{loginMBean.logOut()}"/>
+						</c:if>
+					</b:navbarLinks>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body class="TaoBaiDang">
+	<ui:composition template="common.xhtml">
+		<ui:define name="content">
+			<div style="width: 50%; margin: 0 auto; margin-top: 20px">
+				<p:tabView>
+					<p:tab title="THÔNG TIN">
+						<h:panelGrid columns="1" cellpadding="10">
+							<div class="row">
+								<p style="font-weight: bold;font-size: 17px">Mô tả công việc</p>
+								<h:outputText value="#{quanLyDangTin.detailPost.detail}" />	
+							</div>
+							<div class="row">
+								<p style="font-weight: bold;font-size: 17px">Từ khóa</p>
+								<ui:repeat var="tag" value="#{quanLyDangTin.specifyTags}"><button type="button" class="btn btn-succsess" style="background-color: #eee;margin-right: 10px">#{tag.keyword.name}</button></ui:repeat>
+							</div>
+							<div class="row">
+							</div>
+							<div class="row"></div>
+							<div class="row"></div>
+							<h:outputText value="#{quanLyDangTin.detailPost.name}" />
+						</h:panelGrid>
+					</p:tab>
+					<p:tab title="CÔNG TY">
+						<h:panelGrid columns="1" cellpadding="10">
+							<div class="row" style="margin: 0 auto; text-align: center">
+								<h:panelGrid styleClass="centered">
+									<h:graphicImage library="images"
+										name="#{quanLyDangTin.detailPost.user.company.logo}"
+										style="text-align: center; margin: 0 auto" />
+								</h:panelGrid>
+							</div>
+						
+							
+							<div class="row">
+								<p style="font-weight: bold;font-size: 17px">Giới thiệu về Công Ty</p>
+								<h:outputText value="#{quanLyDangTin.detailPost.user.company.information}" />
+							</div>
+							<div class="row">
+								<p style="font-weight: bold;font-size: 17px">Địa chỉ</p>
+								<h:outputText value="#{quanLyDangTin.detailPost.user.company.adress}" />
+							</div>
+						</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+			</div>
+		</ui:define>
+	</ui:composition>
+</h:body>
+
+</html>

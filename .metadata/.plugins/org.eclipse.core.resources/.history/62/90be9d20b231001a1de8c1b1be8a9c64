@@ -1,0 +1,11 @@
+package lixco.com.services;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+
+@Stateless
+@TransactionManagement(value = TransactionManagementType.CONTAINER)
+public class RoleService {
+
+}

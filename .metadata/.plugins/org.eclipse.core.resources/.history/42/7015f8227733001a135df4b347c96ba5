@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:body id="page-top">
+
+	<ui:composition template="/pages/admin/pagesadmin/common.xhtml">
+
+		<ui:define name="content">
+			<h:form>
+				<h3>Responsive</h3>
+				<p:selectManyCheckbox id="grid2"
+					value="#{checkboxView.selectedCities2}" layout="responsive"
+					columns="3">
+					<f:selectItems value="#{checkboxView.cities}" var="city"
+						itemLabel="#{city}" itemValue="#{city}" />
+				</p:selectManyCheckbox>
+
+			
+
+				<p:separator />
+
+				<p:commandButton value="Submit" update="display"
+					oncomplete="PF('dlg').show()" icon="pi pi-check" />
+
+				<p:dialog header="Values" modal="true" showEffect="clip"
+					widgetVar="dlg" resizable="false">
+					<p:outputPanel id="display">
+						<p:dataList value="#{checkboxView.selectedConsoles}" var="console">
+							<f:facet name="header">
+                    Basic
+                </f:facet>
+                #{console}
+            </p:dataList>
+						<p:dataList value="#{checkboxView.selectedCities}" var="city">
+							<f:facet name="header">
+                    Grid
+                </f:facet>
+                #{city}
+            </p:dataList>
+						<p:dataList value="#{checkboxView.selectedCities2}" var="city">
+							<f:facet name="header">
+                    Grid
+                </f:facet>
+                #{city}
+            </p:dataList>
+						<p:dataList value="#{checkboxView.selectedConsoles2}"
+							var="console">
+							<f:facet name="header">
+                    Custom
+                </f:facet>
+                #{console}
+            </p:dataList>
+						<p:dataList value="#{checkboxView.selectedCars}" var="car">
+							<f:facet name="header">
+                    Cars
+                </f:facet>
+                #{car}
+            </p:dataList>
+					</p:outputPanel>
+				</p:dialog>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+
+</h:body>
+
+</html>

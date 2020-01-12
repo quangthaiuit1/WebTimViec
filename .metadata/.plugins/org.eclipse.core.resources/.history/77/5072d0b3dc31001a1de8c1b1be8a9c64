@@ -1,0 +1,80 @@
+package lixco.com.services;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import lixco.com.entities.Post;
+import lixco.com.entities.Post_Job;
+
+@Stateless
+@TransactionManagement(value = TransactionManagementType.CONTAINER)
+public class Post_JobService extends AbstractService<Post_Job>{
+
+	@PersistenceContext
+	private EntityManager em;
+	 
+	@Resource
+	private SessionContext ct;
+	@Override
+	protected Class<Post_Job> getEntityClass() {
+		return Post_Job.class;
+	}
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+	
+	public List<Post_Job> findByNamePostFilterJob(String inputPost,String inputJob){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Post_Job> cq = cb.createQuery(Post_Job.class);
+		Root<Post_Job> root = cq.from(Post_Job.class);
+		Predicate predicateForIsDeleted
+		  = cb.equal(root.get("post").get("isDeleted"), false);
+		Predicate predicateForPost
+		  = cb.like(root.get("post").get("name"), (inputPost + "%"));
+		Predicate predicateForJob
+		  = cb.equal(root.get("job").get("name"), inputJob);
+		Predicate finalPredicate
+		  = cb.and(predicateForIsDeleted,predicateForPost,predicateForJob );
+		cq.where(finalPredicate);
+		TypedQuery<Post_Job> query = em.createQuery(cq);
+		return query.getResultList();
+	}
+	public List<Post_Job> findByNamePostFilterJobAndLocation(String inputPost,String inputJob,String inputLocation){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Post_Job> cq = cb.createQuery(Post_Job.class);
+		Root<Post_Job> root = cq.from(Post_Job.class);
+		Predicate predicateForIsDeleted
+		  = cb.equal(root.get("post").get("isDeleted"), false);
+		Predicate predicateForPost
+		  = cb.like(root.get("post").get("name"), (inputPost + "%"));
+		Predicate predicateForJob
+		  = cb.equal(root.get("job").get("name"), inputJob);
+		Predicate predicateForLocation
+		  = cb.equal(root.get("post").get("location").get("name"), inputLocation);
+		Predicate finalPredicate
+		  = cb.and(predicateForIsDeleted,predicateForPost,predicateForJob,predicateForLocation);
+		cq.where(finalPredicate);
+		TypedQuery<Post_Job> query = em.createQuery(cq);
+		return query.getResultList();
+	}
+	
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<ui:composition template="common.xhtml">
+		<ui:define name="content">
+			<h:form id="formTaoTaiKhoan"
+				style="width: 80%;margin: 0 auto;margin-top: 30px">
+				<h6 style="text-align: center; padding: 5px; width: 100%">UPLOAD LOGO CÔNG TY</h6>
+				<div class="ui-g">
+					<div class="ui-g-12 ui-md-6 ui-lg-3">Tên đăng nhập:</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-9">
+						<p:inputText style="width: 100%!important" id="inputUsername"
+							value="#{registrationMBean.newUser.username}" />
+					</div>
+				</div>
+			</h:form>
+			<br></br>
+
+			<h:form id="formCreateSuccessRegist">
+				<p:dialog style="color:red;text-align:center" header="Thông báo"
+					widgetVar="dialogCreateSuccessRegist" modal="true"
+					showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="postDetailDelete" style="text-align:center;">
+						<p:panelGrid columns="1" columnClasses="label,value">
+							<span style="color: red">Tạo tài khoản thành công</span>
+							<br></br>
+							<p:menubar id="hgfjhg">
+								<p:menuitem value="Đăng nhập ngay" style="width:100%"
+									url="http://192.168.0.132:8380/WebTimViec_WEB/pages/login/login.xhtml" />
+							</p:menubar>
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:dialog>
+			</h:form>
+			<h:form id="formCreateErrorRegist">
+				<p:dialog style="color:red;text-align:center" header="Thông báo"
+					widgetVar="dialogCreateErrorRegist" modal="true" showEffect="fade"
+					hideEffect="fade" resizable="false">
+					<p:outputPanel id="postDetailDelete" style="text-align:center;">
+						<p:panelGrid columns="1" columnClasses="label,value">
+							<span style="color: red">Vui lòng nhập dữ liệu!</span>
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:dialog>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</h:body>
+
+</html>

@@ -1,0 +1,63 @@
+package lixco.com.services;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import lixco.com.entities.Post;
+import lixco.com.entities.Post_Job;
+
+@Stateless
+@TransactionManagement(value = TransactionManagementType.CONTAINER)
+public class Post_JobService extends AbstractService<Post_Job>{
+
+	@PersistenceContext
+	private EntityManager em;
+	 
+	@Resource
+	private SessionContext ct;
+	@Override
+	protected Class<Post_Job> getEntityClass() {
+		return Post_Job.class;
+	}
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+
+	@Override
+	protected SessionContext getUt() {
+		return ct;
+	}
+	
+	public List<Post> findByNamePostFilterJob(String input){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Post> cq = cb.createQuery(Post.class);
+		Root<Post> root = cq.from(Post.class);
+		Predicate predicateForIsDeleted
+		  = cb.equal(root.get("isDeleted"), false);
+		Predicate predicateForPostName
+		  = cb.equal(root.get("name"), input);
+		Predicate predicateForJob
+		  = cb.equal(root.get("job"), input);
+		Predicate finalPredicate
+		  = cb.and(predicateForIsDeleted,predicateForCompanyId );
+		cq.where(finalPredicate);
+		cq.select(root).where(cb.like(root.get("name"), (input + "%")));
+		TypedQuery<Post> query = em.createQuery(cq);
+		return query.getResultList();
+	}
+	
+}

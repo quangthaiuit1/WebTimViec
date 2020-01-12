@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>LIXCO</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<h:outputStylesheet library="bootstrap"
+		name="web/css/bootstrap.min.css" />
+	<h:outputStylesheet library="bootstrap" name="web/css/login-css.css" />
+</h:head>
+<h:body style="background-color: #71859a">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+				<div class="card card-signin my-5">
+					<div class="card-body">
+						<h5 class="card-title text-center" style="font-weight: bold">Đăng nhập</h5>
+						<h:form>
+							<p:outputLabel value="Tên đăng nhập:" />  
+							<p:inputText  value="#{registrationMBean.username}" required="true"/>
+							<br/>
+							<p:outputLabel for="password" value="Mật khẩu:" /> 
+        					<p:password id="password" value="#{registrationMBean.password}" style="margin-left:33px"  required="true" />
+							<hr/>
+							<p:commandButton style="margin-left: 38%" value="Đăng nhập" action="#{loginMBean.checkUsernamePass()}" />
+							<h:panelGroup rendered="empty #{loginMBean.message}">
+								<p:outputLabel value="Đăng nhập không thành công"/>
+							</h:panelGroup>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<h:outputScript library="bootstrap"
+		name="web/vendor/jquery/jquery.slim.min.js" />
+	<h:outputScript library="bootstrap"
+		name="web/vendor/bootstrap/js/bootstrap.bundle.min.js" />
+</h:body>
+</html>

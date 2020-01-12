@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:body>
+	<ui:composition>
+		<div class="container">
+			<div
+				style="width: 100%; margin-top: 20px; margin-bottom: 20px; padding: 2px; border-color: 2px red; background-color: #00b9f2; border-radius: 5px">
+				<h:form id="formTimViecLam" style="padding:10px">
+					<p:autoComplete id="idpost" value="#{postMBean.nameSearched}"
+						completeMethod="#{postMBean.searchPost}"
+						 forceSelection="true"
+						style="margin-right: 8%" placeholder="Nhập việc cần tìm" />
+					<p:autoComplete id="idJob" dropdown="true" value="#{postMBean.job}"
+						completeMethod="#{postMBean.completeJob}" var="abc"
+						itemLabel="#{abc.name}" itemValue="#{abc}"
+						placeholder="Tất cả ngành nghề" style="margin-right: 6%"
+						converter="#{themeConverter}" forceSelection="true" />
+					<p:autoComplete id="idLocation" dropdown="true"
+						completeMethod="#{postMBean.completeLocation}"
+						placeholder="Địa điểm" itemLabel="#{location.name}"
+						style="margin-right: 6%" itemValue="#{location}" var="location"
+						converter="themeConverter" />
+					<p:commandButton value="Tìm kiếm"
+						style="background-color:#de4a11;color:white;font-size:15px;font-weight:normal" update="formTimViecLamabc" ajax="true" action="#{postMBean.showpost}"/>
+				</h:form>
+			</div>
+
+
+			<div
+				style="background-color: white; border-radius: 5px; padding: 5px; margin-top: 5px; margin-bottom: 15px"
+				class="row">
+				<h6>2 CÔNG VIỆC ĐÃ TÌM THẤY</h6>
+			</div>
+
+			<!-- Project One -->
+			<h:form id="formTimViecLamabc">
+			<ui:repeat var="item" value="#{postMBean.posts}">
+			
+				<div class="row">
+					<div class="col-md-3" style="background-color: white;vertical-align: middle;margin: 0 auto ">
+						<a href="#"> 
+							<h:panelGrid styleClass="centered">
+								<h:graphicImage library="images"
+								name="#{item.user.company.logo}" height="100" />
+							</h:panelGrid>
+						</a>
+					</div>
+					<div class="col-md-9" style="background-color: #d7edef">
+						<h:link value="#{item.name}"
+							style="text-decoration: none;color: red;font-size: 16px;font-weight: bold" outcome="chitietbaiviet">
+							<f:param name="postid" value="#{item.id}" />
+						</h:link>
+						<p style="font-size: 15px">Lương lên đến: #{item.salaryTo}</p>
+						<p style="font-size: 15px">Công Ty: #{item.user.company.name}</p>
+					</div>
+				</div>
+
+				<hr />
+			</ui:repeat>
+			
+			</h:form>
+			<!-- /.row -->
+
+
+
+			<!-- Pagination -->
+			<ul class="pagination justify-content-center">
+				<li class="page-item"><a class="page-link" href="#"
+					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+						<span class="sr-only">Previous</span>
+				</a></li>
+				<li class="page-item"><a class="page-link" href="#">1</a></li>
+				<li class="page-item"><a class="page-link" href="#">2</a></li>
+				<li class="page-item"><a class="page-link" href="#">3</a></li>
+				<li class="page-item"><a class="page-link" href="#"
+					aria-label="Next"> <span aria-hidden="true">&raquo;</span> <span
+						class="sr-only">Next</span>
+				</a></li>
+			</ul>
+		</div>
+
+	</ui:composition>
+</h:body>
+
+</html>

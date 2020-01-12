@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:b="http://bootsfaces.net/ui">
+<h:body>
+	<ui:composition>
+		<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="index.html"
+				style="color: black; font-weight: bold">TÌM VIỆC LÀM</a>
+			<button class="navbar-toggler navbar-toggler-right" type="button"
+				data-toggle="collapse" data-target="#navbarResponsive"
+				aria-controls="navbarResponsive" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div>
+					<!-- Following line is needed for TBS 3.0.1 (panel content overflow issue) -->
+				<h:form>  
+				    <p:growl id="messages"/>	 
+				    <p:menubar>
+				    	<p:menuitem value="Trang chủ" url="http://192.168.0.132:8380/WebTimViec_WEB/" icon="pi pi-times" />
+				        <p:menuitem value="Giới thiệu" url="http://192.168.0.132:8380/WebTimViec_WEB/" icon="pi pi-times" />
+				        <p:menuitem value="Liên hệ" url="http://192.168.0.132:8380/WebTimViec_WEB/" icon="pi pi-times" />
+			 			<c:if test="${nameUser == null}">
+							<p:menuitem value="Đăng nhập" url="http://192.168.0.132:8380/WebTimViec_WEB/pages/login/login.xhtml" icon="pi pi-times" />
+							<p:menuitem value="Đăng ký" url="http://192.168.0.132:8380/WebTimViec_WEB/pages/web/registration.xhtml" icon="pi pi-times" />							
+						</c:if>
+						<c:if test="${nameUser != null}">
+					            <p:submenu  id="titleUser" style="color:red!important" label="Xin Chào: #{nameUser}">
+					            	<p:menuitem value="Đăng tin" url="http://192.168.0.132:8380/WebTimViec_WEB/pages/web/dangtin.xhtml"/>
+					            	<p:menuitem value="Danh sách bài đăng" url="http://192.168.0.132:8380/WebTimViec_WEB/pages/web/danhsachbaidang.xhtml"/>
+					            	<p:menuitem value="Thoát" action="#{loginMBean.logOut}"/>
+					            </p:submenu>
+					            
+				        </c:if>
+				    </p:menubar>
+				</h:form>
+			</div>
+		</div>
+		</nav>
+
+	</ui:composition>
+</h:body>
+
+</html>

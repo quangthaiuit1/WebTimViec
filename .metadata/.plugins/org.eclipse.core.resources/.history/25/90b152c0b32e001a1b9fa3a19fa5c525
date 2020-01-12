@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>LIXCO</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<h:outputStylesheet library="bootstrap"
+		name="web/css/bootstrap.min.css" />
+	<h:outputStylesheet library="bootstrap" name="web/css/login-css.css" />
+</h:head>
+<h:body style="background-color: #71859a">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-9 col-md-7 col-lg-9 mx-auto">
+				<div class="card card-signin my-5">
+					<div class="card-body">
+						<h5 class="card-title text-center" style="font-weight: bold">Đăng
+							ký tài khoản</h5>
+						<h:form>
+							<p:outputLabel value="Tên đăng nhập:" />
+							<p:inputText value="#{registrationMBean.username}"
+								required="true" size="50"/>
+							<br />
+							<p:outputLabel for="password" value="Mật khẩu:" />
+							<p:password id="password" value="#{registrationMBean.password}"
+								style="margin-left:33px" required="true" />
+							<br />
+							<p:outputLabel for="email" value="Email:" />
+							<p:inputText id="email" required="true" label="email"
+								requiredMessage="Please enter your email address."
+								validatorMessage="Invalid email format"
+								value="#{userBean.email}">
+
+								<f:validateRegex
+									pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+							</p:inputText>
+							<br/>
+							<p:outputLabel value="Họ Tên:" />
+							<p:inputText value="#{registrationMBean.name}"
+								required="true" />
+							<br />
+							<p:outputLabel value="Tên Công Ty:" />
+							<p:inputText value="#{registrationMBean.username}"
+								required="true" />
+							<br />
+							<p:outputLabel value="Giới thiệu về công ty:" />
+							<p:inputText value="#{registrationMBean.companyInfo}"
+								required="true" />
+							<br />
+							<p:outputLabel value="Logo Công ty:" />
+							<p:fileUpload value="#{registrationMBean.companyLogo}" mode="simple"/>
+							<br />
+							<p:outputLabel value="Địa chỉ Công ty:" />
+							<p:inputText value="#{registrationMBean.companyAdress}"
+								required="true" />
+							<br />
+							<hr />
+							<p:commandButton style="margin-left: 38%" value="Đăng ký"
+								action="#{loginMBean.checkUsernamePass()}" />
+							<h:panelGroup rendered="empty #{loginMBean.message}">
+								<p:outputLabel value="Đăng nhập không thành công" />
+							</h:panelGroup>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<h:outputScript library="bootstrap"
+		name="web/vendor/jquery/jquery.slim.min.js" />
+	<h:outputScript library="bootstrap"
+		name="web/vendor/bootstrap/js/bootstrap.bundle.min.js" />
+</h:body>
+</html>

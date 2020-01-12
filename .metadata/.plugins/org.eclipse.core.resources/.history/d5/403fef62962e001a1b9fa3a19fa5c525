@@ -1,0 +1,264 @@
+package lixco.com.beans;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.primefaces.PrimeFaces;
+
+import lixco.com.entities.Keyword;
+import lixco.com.entities.Location;
+import lixco.com.entities.Post;
+import lixco.com.entities.Post_Keyword;
+import lixco.com.entities.User;
+import lixco.com.services.KeywordService;
+import lixco.com.services.LocationService;
+import lixco.com.services.PostService;
+import lixco.com.services.Post_KeywordService;
+import lixco.com.services.UserService;
+
+@ManagedBean(name = "quanLyDangTin")
+@SessionScoped
+public class QuanLyDangTin implements Serializable{
+
+
+	private static final long serialVersionUID = 1L;
+
+	private List<Post> postsCustomer;
+	private Post updated;
+	private Post deleted;
+	private long updateLocationId;
+	private long createLocationId;
+	private Post create;
+	private List<Location> locations;
+	private List<Keyword> tags;
+	private List<Keyword> selectedTags;
+	private Post detailPost;
+	
+	@Inject private PostService postService;
+	
+	@Inject private LocationService locationService;
+	
+	@Inject private KeywordService keywordService;
+	
+	@Inject private UserService userService;
+	
+	@Inject private Post_KeywordService post_keywordService;
+	
+	@ManagedProperty(value = "#{loginMBean.userLogin}")
+	private User customer;
+	
+	@PostConstruct
+	public void init() {
+		create = new Post();
+		postsCustomer = new ArrayList<>();
+		postsCustomer = postService.findAllByCustomer(customer.getId());
+		locations = new ArrayList<>();
+		locations = locationService.findAll();
+		tags = new ArrayList<>();
+		tags = keywordService.findAll();
+		detailPost = new Post();
+		
+	}
+	
+	public void abc() {
+		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestParameterMap();
+		String postId = params.get("postid");
+		
+		long num = Long.parseLong(postId);
+		detailPost = postService.findById(num);
+	}
+	
+//	START CRUD
+
+	public void create() {
+		if(create.getName().equals("") || create.getDetail().equals("") ) {
+			PrimeFaces.current().executeScript("PF('dialogCreateError').show()");
+		}
+		else {
+			Date date = new Date();
+			create.setCreatedDate(date);
+			create.setLocation(locationService.findById(createLocationId));
+			create.setUser(userService.findById(customer.getId()));
+			Post temp = new Post();
+			temp = postService.create(create);
+			if(selectedTags != null) {
+				for(Keyword  tag :selectedTags) {
+					Post_Keyword p_k = new Post_Keyword();
+					p_k.setKeyword(tag);
+					p_k.setPost(temp);
+					post_keywordService.create(p_k);
+					p_k = null;
+					create = null;
+				}
+			}
+			selectedTags = null;
+			create = null;
+			PrimeFaces.current().executeScript("PF('dialogCreateSuccess').show()");
+		}
+	}
+	public void update() {
+				Date date = new Date();
+				updated.setModifiedDate(date);
+				postService.update(updated);
+				if(updateLocationId != 0) {
+					updated.setLocation(locationService.findById(updateLocationId));
+					updateLocationId = 0;
+					
+				}
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Update", "Sửa thành công .");  
+				PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+				PrimeFaces.current().dialog().showMessageDynamic(message);
+				updated = null;
+				postsCustomer = postService.findAllByCustomer(customer.getId());
+		PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+		PrimeFaces.current().executeScript("PF('dialogUpdateError').show()");
+
+	}
+	public void cancelUpdate() {
+		PrimeFaces.current().executeScript("PF('dialogUpdate').hide()");
+	}
+	
+	public void delete() {
+			deleted.setDeleted(true);
+			postService.update(deleted);
+			System.out.println("Đã xóa xong");
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Delete", "Xóa thành công .");  
+			PrimeFaces.current().dialog().showMessageDynamic(message);
+			deleted = null;
+			postsCustomer = postService.findAllByCustomer(customer.getId());
+		PrimeFaces.current().executeScript("PF('dialogDelete').hide()");
+		PrimeFaces.current().executeScript("PF('dialogDeleteError').show()");	
+	}
+	public void cancelDelete() {
+		PrimeFaces.current().executeScript("PF('dialogDelete').hide()");
+	}
+	
+
+//	END CRUD
+	
+	public List<Keyword> completeTag(String input){
+		String queryLowerCase = input.toLowerCase();
+		return tags.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase)).collect(Collectors.toList());
+	}
+	
+	public List<Post> getPostsCustomer() {
+		return postsCustomer;
+	}
+
+	public void setPostsCustomer(List<Post> postsCustomer) {
+		this.postsCustomer = postsCustomer;
+	}
+	public User getCustomer() {
+		return customer;
+	}
+	public void setCustomer(User customer) {
+		this.customer = customer;
+	}
+
+
+	public Post getUpdated() {
+		return updated;
+	}
+
+
+	public void setUpdated(Post updated) {
+		this.updated = updated;
+	}
+
+
+	public Post getDeleted() {
+		return deleted;
+	}
+
+
+	public void setDeleted(Post deleted) {
+		this.deleted = deleted;
+	}
+
+
+	public long getUpdateLocationId() {
+		return updateLocationId;
+	}
+
+
+	public void setUpdateLocationId(long updateLocationId) {
+		this.updateLocationId = updateLocationId;
+	}
+
+
+	public Post getCreate() {
+		return create;
+	}
+
+
+	public void setCreate(Post create) {
+		this.create = create;
+	}
+
+
+	public List<Location> getLocations() {
+		return locations;
+	}
+
+
+	public void setLocations(List<Location> locations) {
+		this.locations = locations;
+	}
+
+
+	public long getCreateLocationId() {
+		return createLocationId;
+	}
+
+
+	public void setCreateLocationId(long createLocationId) {
+		this.createLocationId = createLocationId;
+	}
+
+
+	public List<Keyword> getTags() {
+		return tags;
+	}
+
+
+	public void setTags(List<Keyword> tags) {
+		this.tags = tags;
+	}
+
+
+	public List<Keyword> getSelectedTags() {
+		return selectedTags;
+	}
+
+
+	public void setSelectedTags(List<Keyword> selectedTags) {
+		this.selectedTags = selectedTags;
+	}
+
+
+	public Post getDetailPost() {
+		return detailPost;
+	}
+
+
+	public void setDetailPost(Post detailPost) {
+		this.detailPost = detailPost;
+	}
+
+	
+}

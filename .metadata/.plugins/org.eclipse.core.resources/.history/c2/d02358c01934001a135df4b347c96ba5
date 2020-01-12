@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:body id="page-top">
+
+	<ui:composition template="/pages/admin/pagesadmin/common.xhtml">
+
+		<ui:define name="content">
+
+			<h:form id="display" style="width:80%;margin: 0 auto">
+				<h3 style="text-align: center; margin-bottom: 5%">CẤP QUYỀN</h3>
+				<ui:repeat var="account" value="#{loginMBean.allAccount}">
+					<div class="ui-g">
+						<div class="ui-g-4" style="vertical-align: middle;">
+							<h:outputText style="vertical-align: middle!important;" value="#{account.name}" />
+						</div>
+
+						<div class="ui-g-8">
+							<p:selectManyCheckbox id="allow"
+								value="#{loginMBean.selectedRoles}" layout="responsive"
+								columns="4" style="margin-left: 0%">
+								<f:selectItems value="#{loginMBean.roles}" var="role"
+									itemLabel="#{role.name}" itemValue="#{role}" />
+							</p:selectManyCheckbox>
+
+						</div>
+					</div>
+
+					<p:separator />
+				</ui:repeat>
+
+
+				<p:separator />
+
+				<p:commandButton value="Submit" update="display" icon="pi pi-check" />
+
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+
+</h:body>
+
+</html>

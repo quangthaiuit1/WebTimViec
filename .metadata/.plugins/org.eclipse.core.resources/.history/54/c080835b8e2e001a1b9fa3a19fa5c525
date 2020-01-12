@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+  <title>LIXCO</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <!-- Bootstrap core CSS -->
+  <h:outputStylesheet library="bootstrap" name="web/css/bootstrap.min.css" />
+  <h:outputStylesheet library="bootstrap" name="web/css/style-css.css" />
+  <h:outputStylesheet library="bootstrap" name="web/css/css-search.css" />
+
+  <!-- Custom styles for this template -->
+  <h:outputStylesheet library="bootstrap" name="web/css/modern-business.css" />
+  <style type="text/css">
+  	.ui-g div {
+	    background-color: white;
+	    text-align: center;
+	    border: 1px solid #eee;
+	}
+  </style>
+
+
+</h:head>
+<h:body style="background-color: #eee">
+	<ui:insert name="header">
+		<ui:include src="header.xhtml"></ui:include>
+	</ui:insert>
+	<ui:insert name="content">
+		<ui:include src="content.xhtml"></ui:include>
+	</ui:insert>
+</h:body>
+
+</html>

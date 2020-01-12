@@ -1,0 +1,73 @@
+package lixco.com.beans;
+
+import java.io.Serializable;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ManagedBean
+@ViewScoped
+public class RegistrationMBean implements Serializable{
+	private String username;
+	private String name;
+	private String password;
+	private String email;
+	private String companyName;
+	private String companyLogo;
+	
+	private static final long serialVersionUID = 1L;
+	
+	public void Registration() {
+		
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getCompanyLogo() {
+		return companyLogo;
+	}
+
+	public void setCompanyLogo(String companyLogo) {
+		this.companyLogo = companyLogo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
+}

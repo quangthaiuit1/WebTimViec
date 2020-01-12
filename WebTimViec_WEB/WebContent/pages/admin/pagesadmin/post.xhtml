@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body id="page-top">
+
+	<ui:composition template="/pages/admin/pagesadmin/common.xhtml">	
+
+<!-- Start Content -->
+		<ui:define name="content">
+			<h:form id="formAll" stickyHeader="true" stickyTopAt=".layout-topbar">
+				<p:growl id="msgs" showDetail="true" />
+				<p:dataTable id="pDataTableAll" var="item" paginatorPosition="bottom" sortBy="#{item.createdDate}"
+					paginator="true" rows="20" stickyHeader="true" stickyTopAt=".layout-topbar"
+					value="#{postMBean.posts}" style="width: 90%;margin: 0 auto; font-size: 12px;">
+					<!--SummaryRow là sort toàn bộ bảng. nhưng set 1 trường sort mặc định trên datatable  -->
+					<f:facet name="header">
+						Toàn bộ Post 
+					</f:facet>
+
+					<p:column headerText="Id" style="width: 5%;text-align: center">
+						<h:outputText value="#{item.id}" />
+					</p:column>
+
+					<p:column headerText="Tên" style="width: 13%;text-align: center">
+						<h:outputText value="#{item.name}" />
+					</p:column>
+					<p:column headerText="Ngày tạo" style="width: 5%;text-align: center;">
+						<h:outputText value="#{item.createdDate}" />
+					</p:column>
+					<p:column headerText="Ngày sửa" style="width: 5%;text-align: center;">
+						<h:outputText value="#{item.modifiedDate}" />
+					</p:column>
+					<p:column headerText="Công ty" style="width: 7%;text-align: center">
+						<h:outputText value="#{item.user.company.name}" />
+					</p:column>
+					<p:column headerText="Mô tả chi tiết" style="width: 5%;text-align: center">
+						<h:outputText value="Dài quá....." />
+					</p:column>
+					<p:column headerText="Email LH" style="width: 7.5%;text-align: center">
+						<h:outputText value="#{item.contactEmail}" />
+					</p:column>
+					<p:column headerText="Tên LH" style="width: 7.5%;text-align: center" sortBy="#{item.district.name}">
+						<h:outputText value="#{item.contactPeople}" />
+					</p:column>
+					<p:column headerText="Số ĐT LH" style="width: 7.5%;text-align: center" sortBy="#{item.district.name}">
+						<h:outputText value="#{item.contactPhone}" />
+					</p:column>
+					<p:column headerText="Lương từ" style="width: 7.5%;text-align: center" sortBy="#{item.district.name}">
+						<h:outputText value="#{item.salaryFrom}" />
+					</p:column>
+					<p:column headerText="Đến" style="width: 7.5%;text-align: center" sortBy="#{item.district.name}">
+						<h:outputText value="#{item.salaryTo}" />
+					</p:column>
+					<p:column headerText="Địa Chỉ" style="width: 7.5%;text-align: center" sortBy="#{item.district.name}">
+						<h:outputText value="#{item.location.name}" />
+					</p:column>
+					<p:column headerText="Sửa" style="width: 7.5%;text-align: center">
+			        	<p:commandButton  value="Sửa" oncomplete="PF('dialogUpdate').show();" update="formUpdate">    	
+							 <f:setPropertyActionListener value="#{item}" target="#{postMBean.updated}"/>
+			            </p:commandButton>    
+			        </p:column>
+				
+					<p:column headerText="Xóa" style="width: 7.5%;text-align: center">
+			        	<p:commandButton update="formAll" value="Xóa" oncomplete="PF('dialogDelete').show();">    	
+							 <f:setPropertyActionListener value="#{item}" target="#{postMBean.deleted}"/>
+			            </p:commandButton>    
+			        </p:column>
+
+				</p:dataTable>
+			</h:form>
+			<h:form id="formUpdateError">
+				<p:dialog style="color:red;text-align:center" header="Thông báo" widgetVar="dialogUpdateError" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="postDetailDelete" style="text-align:center;">
+			            <p:panelGrid  columns="2"  columnClasses="label,value">
+			            	<span style="color:red">Bạn không có quyền sửa trên form này!</span> 
+			            </p:panelGrid>
+			        </p:outputPanel>
+				</p:dialog>
+			</h:form>
+			<h:form id="formDeleteError">
+				<p:dialog header="Thông báo" widgetVar="dialogDeleteError" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="postDetailDelete" style="text-align:center;">
+			            <p:panelGrid  columns="2"  columnClasses="label,value">
+			            	<span style="color:red">Bạn không có quyền Xóa trên form này!</span> 
+			            </p:panelGrid>
+			        </p:outputPanel>
+				</p:dialog>
+			</h:form>
+			<h:form id="formDelete">
+				<p:dialog header="Delete" widgetVar="dialogDelete" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+					<p:outputPanel id="postDetailDelete" style="text-align:center;">
+			            <p:panelGrid  columns="2"  columnClasses="label,value">
+		              		<p:commandButton  process="formDelete" update="formAll"  value="OK" action="#{postMBean.delete()}" /> 
+		       				<p:commandButton value="Cancel" action="#{postMBean.cancelDelete()}" /> 
+			            </p:panelGrid>
+			        </p:outputPanel>
+				</p:dialog>
+			</h:form>
+			<h:form id="formUpdate">
+				<p:dialog header="Sửa" widgetVar="dialogUpdate" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+			        <p:outputPanel id="postDetailUpdate" style="text-align:center;">
+			            <p:panelGrid  columns="2" rendered="true" columnClasses="label,value">
+			                <h:outputText value="Tên:" />
+			                <p:inputText value="#{postMBean.updated.name}"/>
+			 				
+			                <h:outputText value="Ngày Tạo:" />
+			                <h:outputText value="#{postMBean.updated.createdDate}"/>
+			                
+		         	        <p:outputLabel value="Ngày sửa:" />
+		       	 			<p:calendar  placeholder="#{postMBean.updated.modifiedDate}" value="#{postMBean.updated.modifiedDate}" pattern="MM/dd/yyyy HH:mm:ss" />
+							
+							<h:outputText value="Tên công ty:" />
+			                <p:inputText value="#{postMBean.updated.user.company.name}"/>
+			                
+			                <h:outputText value="Email liên hệ:" />
+			                <p:inputText value="#{postMBean.updated.contactEmail}"/>
+			                
+			                <h:outputText value="Tên liên hệ:" />
+			                <p:inputText value="#{postMBean.updated.contactPeople}"/>
+			                
+			                <h:outputText value="Số điện thoại liên hệ:" />
+			                <p:inputText value="#{postMBean.updated.contactPhone}"/>
+			                
+			                <h:outputText value="Lương từ:" />
+			                <p:inputText value="#{postMBean.updated.salaryFrom}"/>
+			                
+			                <h:outputText value="Lương đến:" />
+			                <p:inputText value="#{postMBean.updated.salaryTo}"/>
+			                
+		         	                   
+			               
+			            </p:panelGrid>
+			            	<br></br>
+		       				<p:commandButton process="formUpdate" ajax="true" update="formAll" value="Cập nhật" action="#{postMBean.update()}" style="width: 49%" />
+		       				<p:commandButton value="Quay lại" action="#{postMBean.cancelUpdate()}" style="width: 50%"/> 
+		       		 </p:outputPanel>
+			        <br></br>        
+			    </p:dialog>
+			</h:form>
+		</ui:define>
+<!-- End Content -->
+	</ui:composition>
+
+
+</h:body>
+
+</html>

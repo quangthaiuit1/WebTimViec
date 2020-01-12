@@ -1,0 +1,119 @@
+package lixco.com.beans;
+
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
+import javax.inject.Named;
+
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
+
+@ManagedBean
+@SessionScoped
+public class RegistrationMBean implements Serializable{
+	private String username;
+	private String name;
+	private String password;
+	private String email;
+	private String companyName;
+	private String companyLogo;
+	private String companyInfo;
+	private String companyAdress;
+	private UploadedFile image;
+	
+	
+	private static final long serialVersionUID = 1L;
+	
+	@PostConstruct
+	public void init() {
+	}
+	
+	public void fileUploadListener(FileUploadEvent e){
+		// Get uploaded file from the FileUploadEvent
+		this.image = e.getFile();
+		// Print out the information of the file
+		System.out.println("Uploaded File Name Is :: "+image.getFileName()+" :: Uploaded File Size :: "+image.getSize());
+	}
+	public void Registration() {
+		
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getCompanyLogo() {
+		return companyLogo;
+	}
+
+	public void setCompanyLogo(String companyLogo) {
+		this.companyLogo = companyLogo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCompanyInfo() {
+		return companyInfo;
+	}
+
+	public void setCompanyInfo(String companyInfo) {
+		this.companyInfo = companyInfo;
+	}
+
+	public String getCompanyAdress() {
+		return companyAdress;
+	}
+
+	public void setCompanyAdress(String companyAdress) {
+		this.companyAdress = companyAdress;
+	}
+
+	public UploadedFile getImage() {
+		return image;
+	}
+
+	public void setImage(UploadedFile image) {
+		this.image = image;
+	}
+	
+	
+	
+}
