@@ -1,11 +1,11 @@
-#Fri Jan 17 14:35:52 ICT 2020
+#Sat Jan 18 11:53:12 ICT 2020
 vl=How many times the 'Finish' button pressed during the day
 l=Wizard class name
 ct=jbt
-d=1579246552601
+d=1579323192039
 c=0
 cmp=usage
 a=finishWizard
 cl=net.sf.jasperreports.eclipse.wizard.project.JRProjectWizard
 v=2.2.202
-s=1
+s=0
