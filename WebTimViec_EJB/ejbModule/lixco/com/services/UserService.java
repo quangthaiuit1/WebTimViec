@@ -1,5 +1,6 @@
 package lixco.com.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import lixco.com.entities.Company;
 import lixco.com.entities.User;
 
 @Stateless
@@ -42,16 +44,32 @@ public class UserService extends AbstractService<User>{
 		return ct;
 	}
 	
-	public User checkUsernamePassword(String username,String password) {
+	public User login(String username,String password) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<User> cq = cb.createQuery(User.class);
 		Root<User> root = cq.from(User.class);
-		Predicate predicateForUsername
-		  = cb.equal(root.get("username"), username);
-		Predicate predicateForPassword
-		  = cb.equal(root.get("password"), password);
+		List<Predicate> queries = new ArrayList<Predicate>();
+		Predicate isDeleteQuery = cb.equal(root.get("isDeleted"), false);
+		queries.add(isDeleteQuery);
+		if(!username.equals("") && password == null) {
+			Predicate predicateForUsername
+			  = cb.equal(root.get("username"), username);
+			queries.add(predicateForUsername);
+		}
+		if(!username.equals("") && password != null) {
+			Predicate predicateForUsername
+			  = cb.equal(root.get("username"), username);
+			Predicate predicateForPassword
+			  = cb.equal(root.get("password"), password);
+			queries.add(predicateForUsername);
+			queries.add(predicateForPassword);
+		}
+		Predicate data[] = new Predicate[queries.size()];
+		for(int i = 0; i< queries.size(); i++) {
+			data[i] = queries.get(i);
+		}
 		Predicate finalPredicate
-		  = cb.and(predicateForUsername, predicateForPassword);
+		  = cb.and(data);
 		cq.where(finalPredicate);
 		TypedQuery<User> query = em.createQuery(cq);
 		List<User> temp = query.getResultList();
@@ -60,21 +78,10 @@ public class UserService extends AbstractService<User>{
 		}
 		else return null;
 	}
-	public List<User> findAllByFilter(){
-		try {
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-			CriteriaQuery<User> cq = cb.createQuery(User.class);
-			Root<User> root = cq.from(User.class);
-			Predicate predicateForIsDeleted
-			  = cb.equal(root.get("isDeleted"), false);
-			cq.where(predicateForIsDeleted);
-			TypedQuery<User> query = em.createQuery(cq);
-			List<User> t = query.getResultList();
-			return t;
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public User registration(User user, Company newCompany) {
+		User newUser = new User();
+		newUser = user;
+		newUser.setCompany(newCompany);
+		return this.create(newUser);
 	}
-
 }

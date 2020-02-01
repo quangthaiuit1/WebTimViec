@@ -13,4 +13,6 @@ public interface IAbstractService<T> {
 	boolean delete(T entities);
 	
 	List<T> findAll();
+	
+	List<T> findAllByFilter();
 }

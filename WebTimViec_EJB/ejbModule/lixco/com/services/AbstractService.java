@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 
@@ -67,5 +68,23 @@ public abstract	class AbstractService<T> implements IAbstractService<T> {
 
 		return query.getResultList();
 	}	
+	
+	@Override
+	public List<T> findAllByFilter(){
+		try {
+			CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+			CriteriaQuery<T> cq = cb.createQuery(getEntityClass());
+			Root<T> root = cq.from(getEntityClass());
+			Predicate predicateForIsDeleted
+			  = cb.equal(root.get("isDeleted"), false);
+			cq.where(predicateForIsDeleted);
+			TypedQuery<T> query = getEntityManager().createQuery(cq);
+			List<T> t = query.getResultList();
+			return t;
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
 

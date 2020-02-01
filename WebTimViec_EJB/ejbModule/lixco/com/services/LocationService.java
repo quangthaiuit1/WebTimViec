@@ -15,7 +15,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import lixco.com.entities.Location;
-import lixco.com.entities.Post;
 
 @Stateless
 @TransactionManagement(value=TransactionManagementType.CONTAINER)

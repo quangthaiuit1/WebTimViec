@@ -1,5 +1,6 @@
 package lixco.com.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -41,65 +42,47 @@ public class Role_PermissionService extends AbstractService<Role_Permission>{
 		return ct;
 	}
 
-	
-	public List<Role_Permission> findByRoleId(long role){
+	public List<Role_Permission> find(long roleId, long permissionId, List<Long> roleIds, String permissionName){
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Role_Permission> cq = cb.createQuery(Role_Permission.class);
 		Root<Role_Permission> root = cq.from(Role_Permission.class);
-		cq.select(root).where(cb.equal(root.get("role").get("id"), role));
-		TypedQuery<Role_Permission> query = em.createQuery(cq);
-		List<Role_Permission> rolePermissions = query.getResultList();
-		return rolePermissions;
-	}
-	
-	//Tim permission bang 1 list role(quyen)
-	public List<Role_Permission> findPermissionByListRole(List<Long> roleIds){
-		try {
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-			CriteriaQuery<Role_Permission> cq = cb.createQuery(Role_Permission.class);
-			Root<Role_Permission> root = cq.from(Role_Permission.class);
-			
-			cq.select(root).where(cb.in(root.get("role").get("id")).value(roleIds));
-			TypedQuery<Role_Permission> query = em.createQuery(cq);
-			List<Role_Permission> rolePermissions = query.getResultList();
-			return rolePermissions;
-		} catch (Exception e) {
-			
-			return null;
+		List<Predicate> queries = new ArrayList<>();
+
+
+		if (roleId != 0 && permissionId == 0 && roleIds == null && permissionName == null) {
+			Predicate userQuery = cb.equal(root.get("role").get("id"), roleId);
+			queries.add(userQuery);
 		}
-	}
-	
-	public List<Role_Permission> findPermissionByListEntityRole(Role_Permission roleIds){
-		try {
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-			CriteriaQuery<Role_Permission> cq = cb.createQuery(Role_Permission.class);
-			Root<Role_Permission> root = cq.from(Role_Permission.class);
-			
-			cq.select(root).where(cb.in(root.get("role")));
-			TypedQuery<Role_Permission> query = em.createQuery(cq);
-			List<Role_Permission> rolePermissions = query.getResultList();
-			return rolePermissions;
-		} catch (Exception e) {
-			
-			return null;
+
+		if (roleId == 0 && permissionId == 0 && roleIds != null && permissionName == null) {
+			Predicate roleQuery = cb.in(root.get("role").get("id")).value(roleIds);
+			queries.add(roleQuery);
 		}
-	}
-	
-	//Tim cac quyen theo ten permission(form) va danh sach role
-	public List<Role_Permission> findByPermissionNameAndRoleList(String permissionName,List<Long> roleIds){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Role_Permission> cq = cb.createQuery(Role_Permission.class);
-		Root<Role_Permission> root = cq.from(Role_Permission.class);
-		Predicate predicateForPermissionName
-		  = cb.equal(root.get("permission").get("link"), permissionName);
-		Predicate predicateForListRole
-		  = cb.in(root.get("role").get("id")).value(roleIds);
-		Predicate finalPredicate
-		  = cb.and(predicateForListRole,predicateForPermissionName );
+		if (roleId == 0 && permissionId == 0 && roleIds == null && permissionName != null) {
+			Predicate userQuery = cb.equal(root.get("permission").get("name"), permissionName);
+			queries.add(userQuery);
+		}
+		if(roleId == 0 && permissionId == 0 && roleIds != null && permissionName != null) {
+			Predicate roleQuery = cb.equal(root.get("permission").get("link"), permissionName);
+			Predicate userQuery = cb.in(root.get("role").get("id")).value(roleIds);
+			queries.add(roleQuery);
+			queries.add(userQuery);
+		}
+		if(roleId != 0 && permissionId != 0) {
+			Predicate roleQuery = cb.equal(root.get("permission").get("id"), permissionId);
+			Predicate userQuery = cb.equal(root.get("role").get("id"),roleId);
+			queries.add(roleQuery);
+			queries.add(userQuery);
+		}
+
+		Predicate data[] = new Predicate[queries.size()];
+		for (int i = 0; i < queries.size(); i++) {
+			data[i] = queries.get(i);
+		}
+		Predicate finalPredicate = cb.and(data);
 		cq.where(finalPredicate);
 		TypedQuery<Role_Permission> query = em.createQuery(cq);
-		List<Role_Permission> rolePermissions = query.getResultList();
-		return rolePermissions;
+		return query.getResultList();
 	}
 	
 }

@@ -16,9 +16,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import com.ibm.wsdl.util.StringUtils;
-
-import lixco.com.entities.Post;
 import lixco.com.entities.Post_Job;
 
 @Stateless
@@ -44,23 +41,7 @@ public class Post_JobService extends AbstractService<Post_Job>{
 	protected SessionContext getUt() {
 		return ct;
 	}
-	//Tim kiem theo bai viet va cong viec
-	public List<Post_Job> findByNamePostFilterJob(String inputPost,String inputJob){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Post_Job> cq = cb.createQuery(Post_Job.class);
-		Root<Post_Job> root = cq.from(Post_Job.class);
-		Predicate predicateForIsDeleted
-		  = cb.equal(root.get("post").get("isDeleted"), false);
-		Predicate predicateForPost
-		  = cb.like(root.get("post").get("name"), (inputPost + "%"));
-		Predicate predicateForJob
-		  = cb.equal(root.get("job").get("name"), inputJob);
-		Predicate finalPredicate
-		  = cb.and(predicateForIsDeleted,predicateForPost,predicateForJob );
-		cq.where(finalPredicate);
-		TypedQuery<Post_Job> query = em.createQuery(cq);
-		return query.getResultList();
-	}
+
 	//Tim kiem nhap vao toan bo
 	public List<Post_Job> find(String name, String job, String location){
 		
@@ -95,69 +76,5 @@ public class Post_JobService extends AbstractService<Post_Job>{
 		TypedQuery<Post_Job> query = em.createQuery(cq);
 		return query.getResultList();
 	}
-	//Tim kiem nhap vao o cong viec va dia diem
-	public List<Post_Job> findByJobAndLocation(String inputJob,String inputLocation){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Post_Job> cq = cb.createQuery(Post_Job.class);
-		Root<Post_Job> root = cq.from(Post_Job.class);
-		Predicate predicateForIsDeleted
-		  = cb.equal(root.get("post").get("isDeleted"), false);
-		Predicate predicateForJob
-		  = cb.equal(root.get("job").get("name"), inputJob);
-		Predicate predicateForLocation
-		  = cb.equal(root.get("post").get("location").get("name"), inputLocation);
-		Predicate finalPredicate
-		  = cb.and(predicateForIsDeleted,predicateForJob,predicateForLocation);
-		cq.where(finalPredicate);
-		TypedQuery<Post_Job> query = em.createQuery(cq);
-		return query.getResultList();
-	}
-	//Tim kiem chi nhap vao o cong viec
-	public List<Post_Job> findByJob(String inputJob){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Post_Job> cq = cb.createQuery(Post_Job.class);
-		Root<Post_Job> root = cq.from(Post_Job.class);
-		Predicate predicateForIsDeleted
-		  = cb.equal(root.get("post").get("isDeleted"), false);
-		Predicate predicateForJob
-		  = cb.equal(root.get("job").get("name"), inputJob);
-		Predicate finalPredicate
-		  = cb.and(predicateForIsDeleted,predicateForJob);
-		cq.where(finalPredicate);
-		TypedQuery<Post_Job> query = em.createQuery(cq);
-		return query.getResultList();
-	}
-	//Tim kiem Chi nhap vao o Dia diem
-	public List<Post_Job> findByLocation(String inputLocation){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Post_Job> cq = cb.createQuery(Post_Job.class);
-		Root<Post_Job> root = cq.from(Post_Job.class);
-		Predicate predicateForIsDeleted
-		  = cb.equal(root.get("post").get("isDeleted"), false);
-		Predicate predicateForLocation
-		  = cb.equal(root.get("post").get("location").get("name"), inputLocation);
-		Predicate finalPredicate
-		  = cb.and(predicateForIsDeleted,predicateForLocation);
-		cq.where(finalPredicate);
-		TypedQuery<Post_Job> query = em.createQuery(cq);
-		return query.getResultList();
-	}
-	// Tim kiem nhap vao o bai viet va dia diem
-	public List<Post_Job> findByPostAndLocation(String inputPost, String inputLocation){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Post_Job> cq = cb.createQuery(Post_Job.class);
-		Root<Post_Job> root = cq.from(Post_Job.class);
-		Predicate predicateForIsDeleted
-		  = cb.equal(root.get("post").get("isDeleted"), false);
-		Predicate predicateForPost
-		  = cb.like(root.get("post").get("name"), (inputPost + "%"));
-		Predicate predicateForLocation
-		  = cb.equal(root.get("post").get("location").get("name"), inputLocation);
-		Predicate finalPredicate
-		  = cb.and(predicateForIsDeleted,predicateForPost,predicateForLocation);
-		cq.where(finalPredicate);
-		TypedQuery<Post_Job> query = em.createQuery(cq);
-		return query.getResultList();
-	}
-	
+
 }
